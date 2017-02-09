@@ -1,15 +1,21 @@
+"use strict";
 let express = require("express");
+let userRoutes = require("./userRoutes.js");
 
-let apiRoute = express.Router();
+let apiRoutes = express.Router();
 
-function verifyToken(req, res, next) {
+apiRoutes.use("/user-data",userRoutes);
 
-}
+apiRoutes.post("/authentication", function (req, res) {
 
-apiRoute.post("/authentication", verifyToken, function(req, res){
-
+    //create token
 });
 
-apiRoute.post("/registration", function(req, res){
-
+apiRoutes.post("/registration", function (req, res) {
+    //create token
 });
+
+apiRoutes.get("/:userLogin/forms/:id", function(req,res) {
+
+})
+
