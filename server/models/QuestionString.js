@@ -8,4 +8,7 @@ let questionStringSchema = new Schema({
 });
 
 //module.exports = questionStringSchema;
-module.exports = mongoose.model('questionRadio',questionRadioSchema);
+//module.exports = mongoose.model('questionString',questionStringSchema);
+module.exports = function(db) {
+    return db.model("questionString", questionStringSchema);
+};

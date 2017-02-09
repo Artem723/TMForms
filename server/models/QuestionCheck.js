@@ -8,7 +8,7 @@ let questionCheckSchema = new Schema({
     usersAns: [Number]
 });
 
-questionCheckSchema.method.addUserAnswer = function(ans /*array*/){
+questionCheckSchema.methods.addUserAnswer = function(ans /*array*/){
     
     if(ans < 0 || ans >= this.possblAns.length) throw new Error("User answer is invalid: got " + ans + "; expected zero-based number less then " + possblAns.length);
     this.usersAns.push(ans);
@@ -17,4 +17,7 @@ questionCheckSchema.method.addUserAnswer = function(ans /*array*/){
 
 
 //module.exports = questionCheckSchema;
-module.exports = mongoose.model('questionCheck',questionCheckSchema);
+//module.exports = mongoose.model('questionCheck',questionCheckSchema);
+module.exports = function(db) {
+    return db.model("questionCheck", questionCheckSchema);
+};

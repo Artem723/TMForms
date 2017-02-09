@@ -13,14 +13,20 @@ let userSchema = new Schema({
     forms: [formSchema]
 });
 
-userSchema.method.setPassword = function (password) {
+userSchema.methods.setPassword = function (password) {
     //TODO hash password
     this.hashedPassword = password;
 }
-let User = mongoose.model("User", userSchema);
-let Form = mongoose.model("Form", formSchema);
+userSchema.methods.isPasswordValid = function(password) {
+    //TODO verufy hashes
+    return password === this.hashedPassword;
+}
+// let User = mongoose.model("User", userSchema);
+// let Form = mongoose.model("Form", formSchema);
 
-module.exports = User;
+module.exports = function(db) {
+    return db.model("User", userSchema);
+};
 //testing----
 /*mongoose.connect('mongodb://application:3!G6PK@ds145669.mlab.com:45669/forms_db');
 let db = mongoose.connection;
