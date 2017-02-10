@@ -3,7 +3,7 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let questionRadioSchema = new Schema({
-    question: String,
+    questionText: String,
     possblAns: [String],
     usersAns: [Number]
 });
