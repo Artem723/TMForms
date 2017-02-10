@@ -96,7 +96,27 @@ apiRoutes.post("/registration", function (req, res) {
 });
 
 apiRoutes.get("/:userLogin/forms/:id", function (req, res) {
+    //send form data with questions without field "usersAns"
+    User.findOne({ login: req.params.userLogin }, function (err, user) {
+        if(err) {
+            res.status(500).json({ message: "Internal server error" }).end();
+            throw err;
+        }
+        if(!user) {
+            res.status(404).json({ message: "User not found" }).end();
+            return;
+        }
+        let form = user.forms.id(req.params.id);
+        if(!form) {
+            res.status(404).json({ message: "Form not found" }).end();
+            return;
+        }
+        form.questions.forEach(function(el){
+            el.usersAns = undefined;
+        });
+        res.json(form).end();
 
+    });
 });
 
 apiRoutes.use("/user-data", userRoutes);
