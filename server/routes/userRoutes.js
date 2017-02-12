@@ -7,9 +7,9 @@ let User = (require("../models/User"))(connection);
 
 let formSchema = require("../models/schemas/form");
 let Form = connection.model("Form", formSchema);
-let QuestionString = (require("./QuestionString"))(connection);
-let QuestionRadio = (require("./QuestionRadio"))(connection);
-let QuestionCheck = (require("./QuestionCheck"))(connection);
+let QuestionString = (require("../models/QuestionString"))(connection);
+let QuestionRadio = (require("../models/QuestionRadio"))(connection);
+let QuestionCheck = (require("../models/QuestionCheck"))(connection);
 
 
 let userRoutes = express.Router();
@@ -34,6 +34,8 @@ userRoutes.use(verifyToken);
 userRoutes.get("/forms", function (req, res) {
     //return to client array of id
     let login = req.userLogin;
+    console.log("Awdawd");
+    console.log(login);
     User.findOne({ login: login }, function (err, user) {
         if (err) {
             res.status(500).json({ message: "Internal server error" }).end();
@@ -44,7 +46,7 @@ userRoutes.get("/forms", function (req, res) {
             return;
         }
         let arrOfFormId = [];
-        user.forms.forEach(function (elment) {
+        user.forms.forEach(function (element) {
             arrOfFormId.push(element.id);
         });
         res.json(arrOfFormId).end();
@@ -59,7 +61,7 @@ userRoutes.post("/forms", function (req, res) {
      *  questions: [
      *      {
      *          questionText: String,
-     *          type: String, //check, radio or String
+     *          type: String, //check, radio or string
      *          possblAns: [String] //optional
      *      }
      *  ]
@@ -101,7 +103,7 @@ userRoutes.post("/forms", function (req, res) {
                     break;
                 case "radio":
                     question = new QuestionRadio({ questionText: el.questionText });
-                    question.possblAns.push.apply(possblAns, el.possblAns);
+                    question.possblAns.push.apply(question.possblAns, el.possblAns);
                     break;
                 case "string":
                     question = new QuestionString({questionText: el.questionText});
@@ -110,24 +112,34 @@ userRoutes.post("/forms", function (req, res) {
                     throw new Error("Invalid type of question(got : " + el.type + " )");
                     break;
             }
-            newForm.push(question);
+            newForm.questions.push(question);
 
         });
-        newForm.save(function(err, form){
+        // newForm.save(function(err, form){
+        //     if(err) {
+        //         res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
+        //         throw err;
+        //     }
+
+        //     res.set("Location", "/api/user-data/forms/" + form.id).end("Success");
+        // })
+        user.forms.push(newForm);
+        user.save(function(err, user){
             if(err) {
                 res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
                 throw err;
             }
 
-            res.set("Location", "/api/user-data/forms/" + form.id).end("Success");
+            res.set("Location", "/api/user-data/forms/" + newForm.id).end("Success");
         })
+      
 
     });
 })
 
 userRoutes.route("/forms/:id")
     .get(function (req, res) {
-
+        
     }).put(function (req, res) {
 
     }).delete(function (req, res) {
