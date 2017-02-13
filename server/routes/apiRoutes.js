@@ -7,6 +7,7 @@ let secretWord = require("../config").secret;
 
 let connection = require("../connection");
 let User = (require("../models/User"))(connection);
+let Form = (require("../models/Form"))(connection);
 
 
 let apiRoutes = express.Router();
@@ -95,18 +96,13 @@ apiRoutes.post("/registration", function (req, res) {
 
 });
 
-apiRoutes.get("/:userLogin/forms/:id", function (req, res) {
+apiRoutes.get("/forms/:id", function (req, res) {
     //send form data with questions without field "usersAns"
-    User.findOne({ login: req.params.userLogin }, function (err, user) {
+    Form.findById(req.params.id , function (err, form) {
         if(err) {
             res.status(500).json({ message: "Internal server error" }).end();
             throw err;
         }
-        if(!user) {
-            res.status(404).json({ message: "User not found" }).end();
-            return;
-        }
-        let form = user.forms.id(req.params.id);
         if(!form) {
             res.status(404).json({ message: "Form not found" }).end();
             return;
@@ -119,7 +115,7 @@ apiRoutes.get("/:userLogin/forms/:id", function (req, res) {
     });
 });
 
-apiRoutes.use("/user-data", userRoutes);
+apiRoutes.use(userRoutes);
 
 module.exports = apiRoutes;
 

@@ -8,4 +8,6 @@ let formSchema = new Schema({
     questions: [] //type of array can be: questionCheck, questionRadio or questionString
 });
 
-module.exports = formSchema;
+module.exports = function(db) {
+    return db.model("Form", formSchema);
+};

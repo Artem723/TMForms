@@ -1,16 +1,12 @@
 'use strict';
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-let formSchema = require('./schemas/form.js');
-let QuestionString = require("./QuestionString");
-let QuestionRadio = require("./QuestionRadio");
-let QuestionCheck = require("./QuestionCheck");
 
 
 let userSchema = new Schema({
     login: { type: String, unique: true, required: true },
     hashedPassword: String,
-    forms: [formSchema]
+    forms: [{type: Schema.Types.ObjectId, ref: "Form"}]
 });
 
 userSchema.methods.setPassword = function (password) {
@@ -21,8 +17,7 @@ userSchema.methods.isPasswordValid = function(password) {
     //TODO verufy hashes
     return password === this.hashedPassword;
 }
-// let User = mongoose.model("User", userSchema);
-// let Form = mongoose.model("Form", formSchema);
+
 
 module.exports = function(db) {
     return db.model("User", userSchema);
