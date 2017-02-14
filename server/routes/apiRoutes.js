@@ -123,25 +123,20 @@ apiRoutes.route("/forms/:id")
          *  }
          * ]
          */
-
+        let form = req.form;
+        req.body.forEach(function (el) {
+            form.questions.id()
+        })
     })
     .get(function (req, res) {
         //send form data with questions without field "usersAns"
-        Form.findById(req.params.id, function (err, form) {
-            if (err) {
-                res.status(500).json({ message: "Internal server error" }).end();
-                throw err;
-            }
-            if (!form) {
-                res.status(404).json({ message: "Form not found" }).end();
-                return;
-            }
-            form.questions.forEach(function (el) {
-                el.usersAns = undefined;
-            });
-            res.json(form).end();
 
+        req.form.questions.forEach(function (el) {
+            el.usersAns = undefined;
         });
+        res.json(req.form).end();
+
+
     });
 
 apiRoutes.use(userRoutes);
