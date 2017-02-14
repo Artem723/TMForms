@@ -8,6 +8,7 @@ let questionStringSchema = new Schema({
 });
 questionStringSchema.methods.addUserAnswer = function (ans) {
     this.usersAns.push(ans);
+    this.save();
 }
 //module.exports = questionStringSchema;
 //module.exports = mongoose.model('questionString',questionStringSchema);

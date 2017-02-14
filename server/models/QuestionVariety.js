@@ -31,6 +31,7 @@ questionVarietySchema.methods.addUserAnswer = function (ans) {
             });
             break;
     }
+    this.save();
     /*if(ans < 0 || ans >= this.possblAns.length) throw new Error("User answer is invalid: got " + ans + "; expected zero-based number less then " + possblAns.length);
     this.usersAns.push(ans);*/
 }

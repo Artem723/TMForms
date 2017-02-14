@@ -125,8 +125,20 @@ apiRoutes.route("/forms/:id")
          */
         let form = req.form;
         req.body.forEach(function (el) {
-            form.questions.id()
-        })
+            let question = form.questions.find(function(q){
+                console.log(q._id + "---" + el.id + ": " + (q._id == el.id));
+                if(q._id == el.id) return true;
+            });
+            try {
+                console.log(question.__proto__);
+                question.addUserAnswer(el.usersAns);
+            }
+            catch(err) {
+                console.log("error occured " + err);
+            }
+            
+        });
+        res.end("Success");
     })
     .get(function (req, res) {
         //send form data with questions without field "usersAns"
