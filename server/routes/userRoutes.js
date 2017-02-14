@@ -24,13 +24,10 @@ function verifyToken(req, res, next) {
         }
         req.userLogin = decoded.login;
         next();
-    })
-}
+    });
+};
 
-userRoutes.use(verifyToken);
-
-userRoutes.get("/forms", function (req, res) {
-    //return to client array of id
+function findUser(req, res, next) {
     let login = req.userLogin;
     User.findOne({ login: login }, function (err, user) {
         if (err) {
@@ -41,14 +38,40 @@ userRoutes.get("/forms", function (req, res) {
             res.status(404).json({ message: "User not found" }).end();
             return;
         }
-        let arrOfFormsId = [];
-        user.forms.forEach(function (element) {
-            arrOfFormsId.push(element);
-        });
-        res.json(arrOfFormsId).end();
-    })
+        req.user = user;
+        next();
 
-})
+    });
+};
+
+userRoutes.use(verifyToken);
+userRoutes.use(findUser);
+
+userRoutes.get("/forms", function (req, res) {
+    //return to client array of id
+    let user = req.user;
+    // User.findOne({ login: login }, function (err, user) {
+    //     if (err) {
+    //         res.status(500).json({ message: "Internal server error" }).end();
+    //         throw err;
+    //     }
+    //     if (!user) {
+    //         res.status(404).json({ message: "User not found" }).end();
+    //         return;
+    //     }
+    //     let arrOfFormsId = [];
+    //     user.forms.forEach(function (element) {
+    //         arrOfFormsId.push(element);
+    //     });
+    //     res.json(arrOfFormsId).end();
+    // });
+    let arrOfFormsId = [];
+    user.forms.forEach(function (element) {
+        arrOfFormsId.push(element);
+    });
+    res.json(arrOfFormsId).end();
+
+});
 
 
 userRoutes.post("/forms", function (req, res) {
@@ -66,7 +89,8 @@ userRoutes.post("/forms", function (req, res) {
      * }
      */
 
-    let login = req.userLogin;
+    //let login = req.userLogin;
+    let user = req.user;
     let title = req.body.title;
     let description = req.body.description;
     let questions = req.body.questions;
@@ -74,66 +98,80 @@ userRoutes.post("/forms", function (req, res) {
         res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
         return;
     }
-    User.findOne({ login: login }, function (err, user) {
-        if (err) {
-            res.status(500).json({ message: "Internal server error. Can't find user." }).end();
-            throw err;
-        }
-        if (!user) {
-            res.status(404).json({ message: "User not found" }).end();
-            return;
-        }
+    // User.findOne({ login: login }, function (err, user) {
+    //     if (err) {
+    //         res.status(500).json({ message: "Internal server error. Can't find user." }).end();
+    //         throw err;
+    //     }
+    //     if (!user) {
+    //         res.status(404).json({ message: "User not found" }).end();
+    //         return;
+    //     }
         let newForm = new Form({
             title: title,
             description: description
         });
 
-        questions.forEach(function (el) {
-            // !!!!! fix
-            // if(typeof el.questionText !== "string" || typeof type !== "string") {
-            //     res.status(400).json({ message: "The data type of the submitted question is not valid" }).end();
-            //     return;
-            // }
-            let question;
-            switch (el.type) {
-                case "check":
-                    question = new QuestionVariety({ questionText: el.questionText, type: "check" });
-                    question.possblAns.push.apply(question.possblAns, el.possblAns);
-                    break;
-                case "radio":
-                    question = new QuestionVariety({ questionText: el.questionText, type: "radio" });
-                    question.possblAns.push.apply(question.possblAns, el.possblAns);
-                    break;
-                case "string":
-                    question = new QuestionString({ questionText: el.questionText });
-                    break;
-                default:
-                    throw new Error("Invalid type of question(got : " + el.type + " )");
-                    break;
-            }
-            newForm.questions.push(question);
+    questions.forEach(function (el) {
+        // !!!!! fix
+        // if(typeof el.questionText !== "string" || typeof type !== "string") {
+        //     res.status(400).json({ message: "The data type of the submitted question is not valid" }).end();
+        //     return;
+        // }
+        let question;
+        switch (el.type) {
+            case "check":
+                question = new QuestionVariety({ questionText: el.questionText, type: "check" });
+                question.possblAns.push.apply(question.possblAns, el.possblAns);
+                break;
+            case "radio":
+                question = new QuestionVariety({ questionText: el.questionText, type: "radio" });
+                question.possblAns.push.apply(question.possblAns, el.possblAns);
+                break;
+            case "string":
+                question = new QuestionString({ questionText: el.questionText });
+                break;
+            default:
+                throw new Error("Invalid type of question(got : " + el.type + " )");
+                break;
+        }
+        newForm.questions.push(question);
 
-        });
-        newForm.save(function (err, form) {
+    });
+    newForm.save(function (err, form) {
+        if (err) {
+            res.status(500).json({ message: "Internal server error. Can't find user." }).end();
+            throw err;
+        }
+        user.forms.push(form._id)
+        user.save(function (err, user) {
             if (err) {
-                res.status(500).json({ message: "Internal server error. Can't find user." }).end();
+                res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
                 throw err;
             }
-            user.forms.push(form._id)
-            user.save(function (err, user) {
-                if (err) {
-                    res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
-                    throw err;
-                }
 
-                res.set("Location", "/api/forms/" + form.id).end("Success");
-            })
-        })
+            res.set("Location", "/api/forms/" + form.id).end("Success");
+        });
     });
-})
+    //});
+});
 
 userRoutes.route("/forms/:id")
     .put(function (req, res) {
+        /** request
+         * {
+         *  title: String,
+         *  description: String,
+         *  questions: [
+         *      {
+         *          questionText: String,
+         *          type: String, //check, radio or string
+         *          possblAns: [String] //optional
+         *      }
+         *  ]
+         * }
+         */
+        let login = req.userLogin;
 
     }).delete(function (req, res) {
 
