@@ -12,8 +12,23 @@ let Form = (require("../models/Form"))(connection);
 
 let apiRoutes = express.Router();
 
+function findForm(req, res, next) {
+    Form.findById(req.params.id, function (err, form) {
+        if (err) {
+            res.status(500).json({ message: "Internal server error" }).end();
+            throw err;
+        }
+        if (!form) {
+            res.status(404).json({ message: "Form not found" }).end();
+            return;
+        }
+        req.form = form;
+        next();
+    });
+}
 
 apiRoutes.use(bodyParser.json());
+
 
 apiRoutes.post("/authentication", function (req, res) {
     /**req.body
@@ -97,27 +112,37 @@ apiRoutes.post("/registration", function (req, res) {
 });
 
 apiRoutes.route("/forms/:id")
-    .post(function(req, res) {
+    .all(findForm)
+    .post(function (req, res) {
+        /**
+         * request
+         * [
+         *  {
+         *      id: String,
+         *      usersAns: [String] or String
+         *  }
+         * ]
+         */
 
     })
     .get(function (req, res) {
-    //send form data with questions without field "usersAns"
-    Form.findById(req.params.id , function (err, form) {
-        if(err) {
-            res.status(500).json({ message: "Internal server error" }).end();
-            throw err;
-        }
-        if(!form) {
-            res.status(404).json({ message: "Form not found" }).end();
-            return;
-        }
-        form.questions.forEach(function(el){
-            el.usersAns = undefined;
-        });
-        res.json(form).end();
+        //send form data with questions without field "usersAns"
+        Form.findById(req.params.id, function (err, form) {
+            if (err) {
+                res.status(500).json({ message: "Internal server error" }).end();
+                throw err;
+            }
+            if (!form) {
+                res.status(404).json({ message: "Form not found" }).end();
+                return;
+            }
+            form.questions.forEach(function (el) {
+                el.usersAns = undefined;
+            });
+            res.json(form).end();
 
+        });
     });
-});
 
 apiRoutes.use(userRoutes);
 
