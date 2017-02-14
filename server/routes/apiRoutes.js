@@ -96,7 +96,11 @@ apiRoutes.post("/registration", function (req, res) {
 
 });
 
-apiRoutes.get("/forms/:id", function (req, res) {
+apiRoutes.route("/forms/:id")
+    .post(function(req, res) {
+
+    })
+    .get(function (req, res) {
     //send form data with questions without field "usersAns"
     Form.findById(req.params.id , function (err, form) {
         if(err) {

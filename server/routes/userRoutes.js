@@ -50,21 +50,6 @@ userRoutes.use(findUser);
 userRoutes.get("/forms", function (req, res) {
     //return to client array of id
     let user = req.user;
-    // User.findOne({ login: login }, function (err, user) {
-    //     if (err) {
-    //         res.status(500).json({ message: "Internal server error" }).end();
-    //         throw err;
-    //     }
-    //     if (!user) {
-    //         res.status(404).json({ message: "User not found" }).end();
-    //         return;
-    //     }
-    //     let arrOfFormsId = [];
-    //     user.forms.forEach(function (element) {
-    //         arrOfFormsId.push(element);
-    //     });
-    //     res.json(arrOfFormsId).end();
-    // });
     let arrOfFormsId = [];
     user.forms.forEach(function (element) {
         arrOfFormsId.push(element);
@@ -89,7 +74,6 @@ userRoutes.post("/forms", function (req, res) {
      * }
      */
 
-    //let login = req.userLogin;
     let user = req.user;
     let title = req.body.title;
     let description = req.body.description;
@@ -98,19 +82,10 @@ userRoutes.post("/forms", function (req, res) {
         res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
         return;
     }
-    // User.findOne({ login: login }, function (err, user) {
-    //     if (err) {
-    //         res.status(500).json({ message: "Internal server error. Can't find user." }).end();
-    //         throw err;
-    //     }
-    //     if (!user) {
-    //         res.status(404).json({ message: "User not found" }).end();
-    //         return;
-    //     }
-        let newForm = new Form({
-            title: title,
-            description: description
-        });
+    let newForm = new Form({
+        title: title,
+        description: description
+    });
 
     questions.forEach(function (el) {
         // !!!!! fix
@@ -153,10 +128,20 @@ userRoutes.post("/forms", function (req, res) {
             res.set("Location", "/api/forms/" + form.id).end("Success");
         });
     });
-    //});
 });
 
+
+
 userRoutes.route("/forms/:id")
+    .all(function (req, res, next) {
+        let user = req.user;
+        let formId = req.params.id;
+        if (user.forms.indexOf(formId) === -1) {
+            res.status(403).json({ message: "Permission denied. You can't update/delete form with id: " + formId + ". Or you doesn't have it yet." }).end();
+            return;
+        }
+        next();
+    })
     .put(function (req, res) {
         /** request
          * {
@@ -171,7 +156,46 @@ userRoutes.route("/forms/:id")
          *  ]
          * }
          */
-        let login = req.userLogin;
+        let body = req.body;
+        Form.findById(req.params.id, function (err, form) {
+            if (err) {
+                res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
+                throw err;
+            }
+            
+            form.title = body.title;
+            form.description = body.description;
+            form.questions = [];
+            
+            body.questions.forEach(function (el) {
+                let question;
+                switch (el.type) {
+                    case "check":
+                        question = new QuestionVariety({ questionText: el.questionText, type: "check" });
+                        question.possblAns.push.apply(question.possblAns, el.possblAns);
+                        break;
+                    case "radio":
+                        question = new QuestionVariety({ questionText: el.questionText, type: "radio" });
+                        question.possblAns.push.apply(question.possblAns, el.possblAns);
+                        break;
+                    case "string":
+                        question = new QuestionString({ questionText: el.questionText });
+                        break;
+                    default:
+                        throw new Error("Invalid type of question(got : " + el.type + " )");
+                        break;
+                }
+                form.questions.push(question);
+                form.save(function(err){
+                    if(err) {
+                        res.status(500).json({ message: "Internal server error. Can't save form." }).end();
+                        throw err;
+                    }
+                    res.end("Success")
+                });
+            });
+
+        });
 
     }).delete(function (req, res) {
 
