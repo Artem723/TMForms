@@ -3,6 +3,7 @@ let express = require("express");
 let jwt = require('jsonwebtoken');
 let secretWord = require("../config").secret;
 let connection = require("../connection");
+var ObjectId = connection.Types.ObjectId;
 let User = (require("../models/User"))(connection);
 
 let Form = (require("../models/Form"))(connection);
@@ -198,7 +199,22 @@ userRoutes.route("/forms/:id")
         });
 
     }).delete(function (req, res) {
-
+        Form.findByIdAndRemove(req.params.id, function(err, form){
+            if(err) {
+                 res.status(500).json({ message: "Internal server error. Can't delete form." }).end();
+                 throw err;
+            }
+            console.log(req.params.id);
+            req.user.forms.pull(new ObjectId(req.params.id));
+            req.user.save(function(err){
+                if(err) {
+                    res.status(500).json({ message: "Internal server error. Can't save user." }).end();
+                    throw err;
+                }
+                res.end("Success");
+            })
+            
+        })
     });
 
 module.exports = userRoutes;
