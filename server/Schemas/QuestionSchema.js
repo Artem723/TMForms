@@ -14,7 +14,7 @@ let questionSchema = new Schema({
 * @param  {String, Array, Number} ans {user answer, data type depends on question type}
 * 
 */
-questionVarietySchema.methods.addUserAnswer = function (ans) {
+questionSchema.methods.addUserAnswer = function (ans) {
     // switch (this.type) {
     //     case "radio":
     //         //ans is zero-based index of possible answer
@@ -35,12 +35,13 @@ questionVarietySchema.methods.addUserAnswer = function (ans) {
     //         });
     //         break;
     // }
+    let self = this;
     switch (this.type) {
         case "radio":
             //ans is zero-based index of possible answer
-            if (typeof ans == ! "number")
+            if (typeof ans !== "number")
                 return;
-            if (ans >= this.possblAns.length)
+            if (ans >= this.possblAns.length || ans < 0)
                 return;
             this.usersAns.push(ans);
             break;
@@ -49,15 +50,16 @@ questionVarietySchema.methods.addUserAnswer = function (ans) {
             if (ans.constructor !== Array)
                 return;
             ans.forEach(function(el){
-                if(el >= this.possblAns.length || el < 0) return;
-                this.usersAns.push(el);
+                if(typeof el !== "number") return;
+                if(el >= self.possblAns.length || el < 0) return;
+                self.usersAns.push(el);
             });
             break;
         case "string":
             if(typeof ans !== "string") return;
             this.usersAns.push(ans);
     }
-    this.save();
+    //this.save();
     /*if(ans < 0 || ans >= this.possblAns.length) throw new Error("User answer is invalid: got " + ans + "; expected zero-based number less then " + possblAns.length);
     this.usersAns.push(ans);*/
 }

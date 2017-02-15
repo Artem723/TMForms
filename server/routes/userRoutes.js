@@ -7,8 +7,8 @@ var ObjectId = connection.Types.ObjectId;
 let User = (require("../models/User"))(connection);
 
 let Form = (require("../models/Form"))(connection);
-let QuestionString = (require("../models/QuestionString"))(connection);
-let QuestionVariety = (require("../models/QuestionVariety"))(connection);
+//let QuestionString = (require("../models/QuestionString"))(connection);
+//let QuestionVariety = (require("../models/QuestionVariety"))(connection);
 
 
 let userRoutes = express.Router();
@@ -50,12 +50,12 @@ userRoutes.use(findUser);
 
 userRoutes.get("/forms", function (req, res) {
     //return to client array of id
-    let user = req.user;
-    let arrOfFormsId = [];
-    user.forms.forEach(function (element) {
-        arrOfFormsId.push(element);
-    });
-    res.json(arrOfFormsId).end();
+    // let user = req.user;
+    // let arrOfFormsId = [];
+    // user.forms.forEach(function (element) {
+    //     arrOfFormsId.push(element);
+    // });
+    res.json(req.user.forms).end();
 
 });
 
@@ -69,7 +69,7 @@ userRoutes.post("/forms", function (req, res) {
      *      {
      *          questionText: String,
      *          type: String, //check, radio or string
-     *          possblAns: [String] //optional
+     *          possblAns: [String] //if string it must be empty
      *      }
      *  ]
      * }
@@ -79,7 +79,7 @@ userRoutes.post("/forms", function (req, res) {
     let title = req.body.title;
     let description = req.body.description;
     let questions = req.body.questions;
-    if (typeof title !== "string" || typeof description !== "string" || questions.constructor !== Array) {
+    if (typeof title !== "string" || typeof description !== "string" || !Array.isArray(questions)) {
         res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
         return;
     }
@@ -88,32 +88,7 @@ userRoutes.post("/forms", function (req, res) {
         description: description
     });
 
-    questions.forEach(function (el) {
-        // !!!!! fix
-        // if(typeof el.questionText !== "string" || typeof type !== "string") {
-        //     res.status(400).json({ message: "The data type of the submitted question is not valid" }).end();
-        //     return;
-        // }
-        let question;
-        switch (el.type) {
-            case "check":
-                question = new QuestionVariety({ questionText: el.questionText, type: "check" });
-                question.possblAns.push.apply(question.possblAns, el.possblAns);
-                break;
-            case "radio":
-                question = new QuestionVariety({ questionText: el.questionText, type: "radio" });
-                question.possblAns.push.apply(question.possblAns, el.possblAns);
-                break;
-            case "string":
-                question = new QuestionString({ questionText: el.questionText });
-                break;
-            default:
-                throw new Error("Invalid type of question(got : " + el.type + " )");
-                break;
-        }
-        newForm.questions.push(question);
-
-    });
+    newForm.addQuestions(questions);
     newForm.save(function (err, form) {
         if (err) {
             res.status(500).json({ message: "Internal server error. Can't find user." }).end();
@@ -134,12 +109,12 @@ userRoutes.post("/forms", function (req, res) {
 
 
 userRoutes.route("/forms/:id")
-/**
-* Checks if user with specified token can modify form with this id
-* @param  {Object} req {request}
-* @param  {Object} res  {response}
-* @param  {Function} next  {function to transfer of control next middleware}
-*/
+    /**
+    * Checks if user with specified token can modify form with this id
+    * @param  {Object} req {request}
+    * @param  {Object} res  {response}
+    * @param  {Function} next  {function to transfer of control next middleware}
+    */
     .all(function (req, res, next) {
         let user = req.user;
         let formId = req.params.id;
@@ -166,60 +141,44 @@ userRoutes.route("/forms/:id")
         let body = req.body;
         Form.findById(req.params.id, function (err, form) {
             if (err) {
-                res.status(500).json({ message: "Internal server error. Can't save new form." }).end();
+                res.status(500).json({ message: "Internal server error. Can't find form." }).end();
                 throw err;
             }
-            
+            if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions)) {
+                res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
+                return;
+            }
+
             form.title = body.title;
             form.description = body.description;
             form.questions = [];
-            
-            body.questions.forEach(function (el) {
-                let question;
-                switch (el.type) {
-                    case "check":
-                        question = new QuestionVariety({ questionText: el.questionText, type: "check" });
-                        question.possblAns.push.apply(question.possblAns, el.possblAns);
-                        break;
-                    case "radio":
-                        question = new QuestionVariety({ questionText: el.questionText, type: "radio" });
-                        question.possblAns.push.apply(question.possblAns, el.possblAns);
-                        break;
-                    case "string":
-                        question = new QuestionString({ questionText: el.questionText });
-                        break;
-                    default:
-                        throw new Error("Invalid type of question(got : " + el.type + " )");
-                        break;
+            form.addQuestions(body.questions);
+            form.save(function (err) {
+                if (err) {
+                    res.status(500).json({ message: "Internal server error. Can't save form." }).end();
+                    throw err;
                 }
-                form.questions.push(question);
-                form.save(function(err){
-                    if(err) {
-                        res.status(500).json({ message: "Internal server error. Can't save form." }).end();
-                        throw err;
-                    }
-                    res.end("Success")
-                });
-            });
+                res.end("Success");
+            })
 
         });
 
     }).delete(function (req, res) {
-        Form.findByIdAndRemove(req.params.id, function(err, form){
-            if(err) {
-                 res.status(500).json({ message: "Internal server error. Can't delete form." }).end();
-                 throw err;
+        Form.findByIdAndRemove(req.params.id, function (err, form) {
+            if (err) {
+                res.status(500).json({ message: "Internal server error. Can't delete form." }).end();
+                throw err;
             }
             console.log(req.params.id);
             req.user.forms.pull(new ObjectId(req.params.id));
-            req.user.save(function(err){
-                if(err) {
+            req.user.save(function (err) {
+                if (err) {
                     res.status(500).json({ message: "Internal server error. Can't save user." }).end();
                     throw err;
                 }
                 res.end("Success");
             })
-            
+
         })
     });
 

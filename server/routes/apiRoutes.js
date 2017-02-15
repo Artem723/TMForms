@@ -119,34 +119,48 @@ apiRoutes.route("/forms/:id")
          * [
          *  {
          *      id: String,
-         *      usersAns: [String] or String
+         *      usersAns: [Number], Number or String
          *  }
          * ]
          */
         let form = req.form;
+        if(!Array.isArray(req.body)) {
+            res.status(400).json({ message: "Request body must be an Array type." }).end();
+            return;
+        };
         req.body.forEach(function (el) {
-            let question = form.questions.find(function(q){
-                console.log(q._id + "---" + el.id + ": " + (q._id == el.id));
-                if(q._id == el.id) return true;
-            });
-            try {
-                console.log(question.__proto__);
-                question.addUserAnswer(el.usersAns);
-            }
-            catch(err) {
-                console.log("error occured " + err);
-            }
-            
+            // let question = form.questions.find(function(q){
+            //     console.log(q._id + "---" + el.id + ": " + (q._id == el.id));
+            //     if(q._id == el.id) return true;
+            // });
+            // try {
+            //     console.log(question.__proto__);
+            //     question.addUserAnswer(el.usersAns);
+            // }
+            // catch(err) {
+            //     console.log("error occured " + err);
+            // }
+            let question = form.questions.id(el.id);
+            //console.log("Question: " + question);
+            if(question === null) return;
+            question.addUserAnswer(el.usersAns);
         });
-        res.end("Success");
+        form.save(function(err){
+            if(err) {
+                res.status(500).json({ message: "Internal server Error." }).end();
+                throw err;
+            }
+            res.end("");
+        })
+        
     })
     .get(function (req, res) {
         //send form data with questions without field "usersAns"
-
-        req.form.questions.forEach(function (el) {
+        let form = req.form;
+        form.questions.forEach(function (el) {
             el.usersAns = undefined;
         });
-        res.json(req.form).end();
+        res.json(form).end();
 
 
     });
