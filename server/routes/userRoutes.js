@@ -134,6 +134,12 @@ userRoutes.post("/forms", function (req, res) {
 
 
 userRoutes.route("/forms/:id")
+/**
+* Checks if user with specified token can modify form with this id
+* @param  {Object} req {request}
+* @param  {Object} res  {response}
+* @param  {Function} next  {function to transfer of control next middleware}
+*/
     .all(function (req, res, next) {
         let user = req.user;
         let formId = req.params.id;
@@ -144,7 +150,7 @@ userRoutes.route("/forms/:id")
         next();
     })
     .put(function (req, res) {
-        /** request
+        /** req.body should be
          * {
          *  title: String,
          *  description: String,
