@@ -12,7 +12,13 @@ let Form = (require("../models/Form"))(connection);
 
 
 let userRoutes = express.Router();
-
+/**
+* Function verifies token and if it's valid, add user's login to property req.userLogin 
+* @param  {Object} req  {HTTP request}
+* @param  {Object} res  {HTTP response}
+* @param  {next} next {move to next middleware}
+* 
+*/
 function verifyToken(req, res, next) {
     //DONE add user.login to req.userLogin
     //let token = req.body.token;
@@ -27,7 +33,12 @@ function verifyToken(req, res, next) {
         next();
     });
 };
-
+/**
+* Finds user with specified login in field req.userLogin and adds its to req.user field
+* @param  {Object} req  {HTTP request}
+* @param  {Object} res  {HTTP response}
+* @param  {Function} next {move to next middleware}
+*/
 function findUser(req, res, next) {
     let login = req.userLogin;
     User.findOne({ login: login }, function (err, user) {
@@ -44,6 +55,22 @@ function findUser(req, res, next) {
 
     });
 };
+
+/**
+* Checks if user with specified token can modify form with this id
+* @param  {Object} req {request}
+* @param  {Object} res  {response}
+* @param  {Function} next  {function to transfer of control next middleware}
+*/
+function checkPermission(req, res, next) {
+    let user = req.user;
+    let formId = req.params.id;
+    if (user.forms.indexOf(formId) === -1) {
+        res.status(403).json({ message: "Permission denied. You can't update/delete form with id: " + formId + ". Or you doesn't have it yet." }).end();
+        return;
+    }
+    next();
+}
 
 userRoutes.use(verifyToken);
 userRoutes.use(findUser);
@@ -109,21 +136,7 @@ userRoutes.post("/forms", function (req, res) {
 
 
 userRoutes.route("/forms/:id")
-    /**
-    * Checks if user with specified token can modify form with this id
-    * @param  {Object} req {request}
-    * @param  {Object} res  {response}
-    * @param  {Function} next  {function to transfer of control next middleware}
-    */
-    .all(function (req, res, next) {
-        let user = req.user;
-        let formId = req.params.id;
-        if (user.forms.indexOf(formId) === -1) {
-            res.status(403).json({ message: "Permission denied. You can't update/delete form with id: " + formId + ". Or you doesn't have it yet." }).end();
-            return;
-        }
-        next();
-    })
+    .all(checkPermission)
     .put(function (req, res) {
         /** req.body should be
          * {
@@ -143,6 +156,10 @@ userRoutes.route("/forms/:id")
             if (err) {
                 res.status(500).json({ message: "Internal server error. Can't find form." }).end();
                 throw err;
+            }
+            if (!form) {
+                res.status(404).json({ message: "Form not found" }).end();
+                return;
             }
             if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions)) {
                 res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
@@ -181,5 +198,27 @@ userRoutes.route("/forms/:id")
 
         })
     });
+userRoutes.get("/results/forms/:id", checkPermission, function (req, res) {
+    Form.findById(req.params.id, function (err, form) {
+        if (err) {
+            res.status(500).json({ message: "Internal server error. Can't find form." }).end();
+            throw err;
+        }
+        if (!form) {
+            res.status(404).json({ message: "Form not found" }).end();
+            return;
+        }
+        let resArr = form.questions.map(function(q) {
+            return {
+                type: q.type,
+                possblAns: q.possblAns,
+                usersAns: q.usersAns 
+            }
+        });
+        res.json(resArr).end();
+
+
+    })
+})
 
 module.exports = userRoutes;

@@ -11,7 +11,13 @@ let Form = (require("../models/Form"))(connection);
 
 
 let apiRoutes = express.Router();
-
+/**
+* Function finds form and sets property req.login to found form
+* @param  {Object} req  {HTTP request}
+* @param  {Object} res  {HTTP response}
+* @param  {next} next {move to next middleware}
+* 
+*/
 function findForm(req, res, next) {
     Form.findById(req.params.id, function (err, form) {
         if (err) {
