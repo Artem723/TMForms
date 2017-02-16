@@ -1,6 +1,7 @@
 'use strict';
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
+let bcrypt = require("bcrypt-nodejs");
 
 
 let userSchema = new Schema({
@@ -8,14 +9,25 @@ let userSchema = new Schema({
     hashedPassword: String,
     forms: [{type: Schema.Types.ObjectId, ref: "Form"}]
 });
-
+/**
+* Hashs user's password and save its in db
+* @param  {String} password {User's password}
+*/
 userSchema.methods.setPassword = function (password) {
     //TODO hash password
-    this.hashedPassword = password;
+    let self = this;
+    bcrypt.hash(password, null, null, function(err, hash){
+        if(err) throw err;
+        self.hashedPassword = hash;
+    })
 }
+/**
+* Check user's password
+* @param  {String} password {User's password}
+*/
 userSchema.methods.isPasswordValid = function(password) {
     //TODO verufy hashes
-    return password === this.hashedPassword;
+    return bcrypt.compareSync(password, this.hashedPassword);
 }
 
 

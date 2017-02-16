@@ -111,7 +111,14 @@ apiRoutes.post("/registration", function (req, res) {
                 res.status(500).json({ message: "Internal server error" }).end();
                 throw err;
             }
-            res.end();
+            jwt.sign({ login: body.login }, secretWord, { expiresIn: "7d" }, function (err, token) {
+                if (err) {
+                    res.status(500).json({ message: "Internal server error" }).end();
+                    throw err;
+                }
+                res.json({ token: token }).end();
+            })
+           
         })
     })
 
@@ -130,7 +137,7 @@ apiRoutes.route("/forms/:id")
          * ]
          */
         let form = req.form;
-        if(!Array.isArray(req.body)) {
+        if (!Array.isArray(req.body)) {
             res.status(400).json({ message: "Request body must be an Array type." }).end();
             return;
         };
@@ -148,17 +155,17 @@ apiRoutes.route("/forms/:id")
             // }
             let question = form.questions.id(el.id);
             //console.log("Question: " + question);
-            if(question === null) return;
+            if (question === null) return;
             question.addUserAnswer(el.usersAns);
         });
-        form.save(function(err){
-            if(err) {
+        form.save(function (err) {
+            if (err) {
                 res.status(500).json({ message: "Internal server Error." }).end();
                 throw err;
             }
             res.end("");
         })
-        
+
     })
     .get(function (req, res) {
         //send form data with questions without field "usersAns"
