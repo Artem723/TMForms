@@ -1,76 +1,19 @@
 "use strict";
 let express = require("express");
-let jwt = require('jsonwebtoken');
-let secretWord = require("../config").secret;
 let connection = require("../connection");
 var ObjectId = connection.Types.ObjectId;
-let User = (require("../models/User"))(connection);
 
 let Form = (require("../models/Form"))(connection);
 //let QuestionString = (require("../models/QuestionString"))(connection);
 //let QuestionVariety = (require("../models/QuestionVariety"))(connection);
+let middlewares = require("./middlewares");
+let verifyToken = middlewares.verifyToken;
+let findUser = middlewares.findUser;
+let checkPermission = middlewares.checkPermission;
+let findForm = middlewares.findForm;
 
 
 let userRoutes = express.Router();
-/**
-* Function verifies token and if it's valid, add user's login to property req.userLogin 
-* @param  {Object} req  {HTTP request}
-* @param  {Object} res  {HTTP response}
-* @param  {next} next {move to next middleware}
-* 
-*/
-function verifyToken(req, res, next) {
-    //DONE add user.login to req.userLogin
-    //let token = req.body.token;
-    let token = req.get("Authorization").split(" ")[1];
-
-    jwt.verify(token, secretWord, function (err, decoded) {
-        if (err) {
-            res.status(401).json({ message: 'Authorization failed. Wrong token.' }).end();
-            return;
-        }
-        req.userLogin = decoded.login;
-        next();
-    });
-};
-/**
-* Finds user with specified login in field req.userLogin and adds its to req.user field
-* @param  {Object} req  {HTTP request}
-* @param  {Object} res  {HTTP response}
-* @param  {Function} next {move to next middleware}
-*/
-function findUser(req, res, next) {
-    let login = req.userLogin;
-    User.findOne({ login: login }, function (err, user) {
-        if (err) {
-            res.status(500).json({ message: "Internal server error" }).end();
-            throw err;
-        }
-        if (!user) {
-            res.status(404).json({ message: "User not found" }).end();
-            return;
-        }
-        req.user = user;
-        next();
-
-    });
-};
-
-/**
-* Checks if user with specified token can modify form with this id
-* @param  {Object} req {request}
-* @param  {Object} res  {response}
-* @param  {Function} next  {function to transfer of control next middleware}
-*/
-function checkPermission(req, res, next) {
-    let user = req.user;
-    let formId = req.params.id;
-    if (user.forms.indexOf(formId) === -1) {
-        res.status(403).json({ message: "Permission denied. You can't update/delete form with id: " + formId + ". Or you doesn't have it yet." }).end();
-        return;
-    }
-    next();
-}
 
 userRoutes.use(verifyToken);
 userRoutes.use(findUser);
@@ -137,7 +80,7 @@ userRoutes.post("/forms", function (req, res) {
 
 userRoutes.route("/forms/:id")
     .all(checkPermission)
-    .put(function (req, res) {
+    .put(findForm, function (req, res) {
         /** req.body should be
          * {
          *  title: String,
@@ -152,15 +95,7 @@ userRoutes.route("/forms/:id")
          * }
          */
         let body = req.body;
-        Form.findById(req.params.id, function (err, form) {
-            if (err) {
-                res.status(500).json({ message: "Internal server error. Can't find form." }).end();
-                throw err;
-            }
-            if (!form) {
-                res.status(404).json({ message: "Form not found" }).end();
-                return;
-            }
+        let form = req.form;
             if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions)) {
                 res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
                 return;
@@ -178,7 +113,7 @@ userRoutes.route("/forms/:id")
                 res.end("Success");
             })
 
-        });
+        
 
     }).delete(function (req, res) {
         Form.findByIdAndRemove(req.params.id, function (err, form) {
@@ -198,16 +133,8 @@ userRoutes.route("/forms/:id")
 
         })
     });
-userRoutes.get("/results/forms/:id", checkPermission, function (req, res) {
-    Form.findById(req.params.id, function (err, form) {
-        if (err) {
-            res.status(500).json({ message: "Internal server error. Can't find form." }).end();
-            throw err;
-        }
-        if (!form) {
-            res.status(404).json({ message: "Form not found" }).end();
-            return;
-        }
+userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, res) {
+        let form = req.form;
         let resArr = form.questions.map(function(q) {
             return {
                 type: q.type,
@@ -215,10 +142,7 @@ userRoutes.get("/results/forms/:id", checkPermission, function (req, res) {
                 usersAns: q.usersAns 
             }
         });
-        res.json(resArr).end();
-
-
-    })
+        res.json(resArr).end();    
 })
 
 module.exports = userRoutes;

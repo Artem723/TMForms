@@ -2,12 +2,11 @@
 let express = require("express");
 let userRoutes = require("./userRoutes.js");
 let bodyParser = require('body-parser');
-let jwt = require('jsonwebtoken');
-let secretWord = require("../config").secret;
+
 
 let connection = require("../connection");
 let User = (require("../models/User"))(connection);
-let Form = (require("../models/Form"))(connection);
+let findForm = require("./middlewares").findForm;
 
 
 let apiRoutes = express.Router();
@@ -18,20 +17,6 @@ let apiRoutes = express.Router();
 * @param  {next} next {move to next middleware}
 * 
 */
-function findForm(req, res, next) {
-    Form.findById(req.params.id, function (err, form) {
-        if (err) {
-            res.status(500).json({ message: "Internal server error" }).end();
-            throw err;
-        }
-        if (!form) {
-            res.status(404).json({ message: "Form not found" }).end();
-            return;
-        }
-        req.form = form;
-        next();
-    });
-}
 
 apiRoutes.use(bodyParser.json());
 
