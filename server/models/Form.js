@@ -6,7 +6,8 @@ let Schema = mongoose.Schema;
 let formSchema = new Schema({
     title: String,
     description: String,
-    questions: [QuestionSchema]
+    questions: [QuestionSchema],
+    isOpen: Boolean
 });
 /**
  * Method validates and adds the questions to document. This method doesn't save changes.

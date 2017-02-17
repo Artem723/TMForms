@@ -38,6 +38,7 @@ function verifyToken(req, res, next) {
     let authHeader = req.get("Authorization");
     if(!authHeader) {
         res.status(401).end();
+        return;
     }
     let token = req.get("Authorization").split(" ")[1];
 
@@ -74,7 +75,7 @@ function findUser(req, res, next) {
 };
 
 /**
-* Checks if user with specified token can modify form with this id
+* Checks if user with specified token, can modify form with this id
 * @param  {Object} req {request}
 * @param  {Object} res  {response}
 * @param  {Function} next  {function to transfer of control next middleware}

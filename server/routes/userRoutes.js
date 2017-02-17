@@ -33,6 +33,7 @@ userRoutes.get("/forms", function (req, res) {
 userRoutes.post("/forms", function (req, res) {
     /** request
      * {
+     *  isOpen: Boolean,
      *  title: String,
      *  description: String,
      *  questions: [
@@ -49,13 +50,15 @@ userRoutes.post("/forms", function (req, res) {
     let title = req.body.title;
     let description = req.body.description;
     let questions = req.body.questions;
-    if (typeof title !== "string" || typeof description !== "string" || !Array.isArray(questions)) {
+    let isOpen = req.body.isOpen;
+    if (typeof title !== "string" || typeof description !== "string" || !Array.isArray(questions) || typeof isOpen !== "boolean") {
         res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
         return;
     }
     let newForm = new Form({
         title: title,
-        description: description
+        description: description,
+        isOpen: isOpen
     });
 
     newForm.addQuestions(questions);
@@ -83,6 +86,7 @@ userRoutes.route("/forms/:id")
     .put(findForm, function (req, res) {
         /** req.body should be
          * {
+         *  isOpen: Boolean,
          *  title: String,
          *  description: String,
          *  questions: [
@@ -94,15 +98,16 @@ userRoutes.route("/forms/:id")
          *  ]
          * }
          */
+
         let body = req.body;
         let form = req.form;
-            if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions)) {
+            if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions) || typeof body.isOpen !== "boolean") {
                 res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
                 return;
             }
-
             form.title = body.title;
             form.description = body.description;
+            form.isOpen = body.isOpen;
             form.questions = [];
             form.addQuestions(body.questions);
             form.save(function (err) {
@@ -133,6 +138,7 @@ userRoutes.route("/forms/:id")
 
         })
     });
+    
 userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, res) {
         let form = req.form;
         let resArr = form.questions.map(function(q) {

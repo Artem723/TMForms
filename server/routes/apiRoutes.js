@@ -6,17 +6,14 @@ let bodyParser = require('body-parser');
 
 let connection = require("../connection");
 let User = (require("../models/User"))(connection);
-let findForm = require("./middlewares").findForm;
+let middlewares = require("./middlewares");
+let findForm = middlewares.findForm;
+let checkPermission = middlewares.checkPermission;
+let findUser = middlewares.findUser;
+let verifyToken = middlewares.verifyToken;
 
 
 let apiRoutes = express.Router();
-/**
-* Function finds form and sets property req.login to found form
-* @param  {Object} req  {HTTP request}
-* @param  {Object} res  {HTTP response}
-* @param  {next} next {move to next middleware}
-* 
-*/
 
 apiRoutes.use(bodyParser.json());
 
@@ -103,7 +100,7 @@ apiRoutes.post("/registration", function (req, res) {
                 }
                 res.json({ token: token }).end();
             })
-           
+
         })
     })
 
@@ -122,6 +119,7 @@ apiRoutes.route("/forms/:id")
          * ]
          */
         let form = req.form;
+        if (!form.isOpen) res.status(403).json({ message: "Form is closed." }).end()
         if (!Array.isArray(req.body)) {
             res.status(400).json({ message: "Request body must be an Array type." }).end();
             return;
@@ -152,15 +150,35 @@ apiRoutes.route("/forms/:id")
         })
 
     })
-    .get(function (req, res) {
+    .get(function (req, res, next) {
         //send form data with questions without field "usersAns"
         let form = req.form;
+        if (!form.isOpen) {
+            next();
+            return;
+        }
         form.questions.forEach(function (el) {
             el.usersAns = undefined;
         });
         res.json(form).end();
 
 
+    }, function (req, res, next) {
+        let authHeader = req.get("Authorization");
+        if (!authHeader) {
+            res.status(403).json({ message: "Form is closed." }).end();
+            return;
+        }
+        next();
+    },
+    verifyToken,
+    findUser,
+    checkPermission,
+    function (req, res) {
+        req.form.questions.forEach(function (el) {
+            el.usersAns = undefined;
+        });
+        res.json(req.form).end();
     });
 
 apiRoutes.use(userRoutes);
