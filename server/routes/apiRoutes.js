@@ -2,7 +2,8 @@
 let express = require("express");
 let userRoutes = require("./userRoutes.js");
 let bodyParser = require('body-parser');
-
+let jwt = require('jsonwebtoken');
+let secretWord = require("../config").secret;
 
 let connection = require("../connection");
 let User = (require("../models/User"))(connection);

@@ -19,13 +19,27 @@ userRoutes.use(verifyToken);
 userRoutes.use(findUser);
 
 userRoutes.get("/forms", function (req, res) {
-    //return to client array of id
+    //return to client array of object {_id, title}
     // let user = req.user;
     // let arrOfFormsId = [];
     // user.forms.forEach(function (element) {
     //     arrOfFormsId.push(element);
     // });
-    res.json(req.user.forms).end();
+
+
+    let options = {
+        path: "forms",
+        select: "title",
+    }
+    req.user.populate(options, function (err, user) {
+        if (err) {
+            res.status(500).json({ message: "Internal server error. Can't find user." }).end();
+            throw err;
+        }
+        res.json(user.forms).end();
+    });
+
+    //res.json(req.user.forms).end();
 
 });
 
@@ -101,24 +115,24 @@ userRoutes.route("/forms/:id")
 
         let body = req.body;
         let form = req.form;
-            if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions) || typeof body.isOpen !== "boolean") {
-                res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
-                return;
+        if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions) || typeof body.isOpen !== "boolean") {
+            res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
+            return;
+        }
+        form.title = body.title;
+        form.description = body.description;
+        form.isOpen = body.isOpen;
+        form.questions = [];
+        form.addQuestions(body.questions);
+        form.save(function (err) {
+            if (err) {
+                res.status(500).json({ message: "Internal server error. Can't save form." }).end();
+                throw err;
             }
-            form.title = body.title;
-            form.description = body.description;
-            form.isOpen = body.isOpen;
-            form.questions = [];
-            form.addQuestions(body.questions);
-            form.save(function (err) {
-                if (err) {
-                    res.status(500).json({ message: "Internal server error. Can't save form." }).end();
-                    throw err;
-                }
-                res.end("Success");
-            })
+            res.end("Success");
+        })
 
-        
+
 
     }).delete(function (req, res) {
         Form.findByIdAndRemove(req.params.id, function (err, form) {
@@ -138,17 +152,17 @@ userRoutes.route("/forms/:id")
 
         })
     });
-    
+
 userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, res) {
-        let form = req.form;
-        let resArr = form.questions.map(function(q) {
-            return {
-                type: q.type,
-                possblAns: q.possblAns,
-                usersAns: q.usersAns 
-            }
-        });
-        res.json(resArr).end();    
+    let form = req.form;
+    let resArr = form.questions.map(function (q) {
+        return {
+            type: q.type,
+            possblAns: q.possblAns,
+            usersAns: q.usersAns
+        }
+    });
+    res.json(resArr).end();
 })
 
 module.exports = userRoutes;

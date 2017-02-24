@@ -5,7 +5,7 @@ let connection = require("../connection");
 let User = (require("../models/User"))(connection);
 let Form = (require("../models/Form"))(connection);
 /**
-* Function finds form and sets property req.login to found form
+* Function finds form and sets property req.form to found form
 * @param  {Object} req  {HTTP request}
 * @param  {Object} res  {HTTP response}
 * @param  {next} next {move to next middleware}
