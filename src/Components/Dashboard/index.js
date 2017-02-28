@@ -1,4 +1,6 @@
-import React, {Component} from "react"
+import React, { Component } from "react"
+import SearchBar from "../SearchBar"
+import FormTile from "../FormTile"
 
 let forms = [
   {
@@ -19,11 +21,15 @@ let forms = [
   }
 ];
 export default class Dashboard extends Component {
-    render() {
-        return (
-        <div>
-            Dashboard
-        </div>
-        )
-    }
+  render() {
+    const tiles = forms.map((el) => {
+      return <FormTile key={el._id} title={el.title} />
+    })
+    return (
+      <div>
+        <SearchBar />
+        {tiles}
+      </div>
+    )
+  }
 }
