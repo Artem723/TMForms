@@ -4,7 +4,9 @@ export default class HeaderUnloggedIn extends Component {
     render() {
         return (
             <div>
-                Header UnLogged In
+                React Forms
+                {" "}<button>sign up</button>
+                {" "}<button>log in</button>
             </div>
         )
     }
