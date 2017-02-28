@@ -1,7 +1,8 @@
-import React, {Component} from "react"
+import React, { Component } from "react"
+import Question from "../Question"
 
 const form = {
-    "_id":  "58a6e353702e7410f4a33ee2",
+    "_id": "58a6e353702e7410f4a33ee2",
     "title": "The best title",
     "description": "The best description",
     "isOpen": true,
@@ -15,7 +16,7 @@ const form = {
         {
             "questionText": "Where are you from?",
             "type": "radio",
-            "_id":  "58a6e8ff9070be11bc9466b2",
+            "_id": "58a6e8ff9070be11bc9466b2",
             "possblAns": [
                 "Brest",
                 "Minsk",
@@ -24,14 +25,20 @@ const form = {
             ]
         }
     ]
-    
+
 }
 
 export default class FormViewer extends Component {
     render() {
+        const questions = form.questions.map((el) => {
+            return <Question questionText={el.questionText} 
+            type={el.type} possblAns={el.possblAns} key={el._id}/>
+        });
         return (
             <div>
-                Show form
+                {form.title} {"\n"}
+                {form.description} {"\n"}
+                {questions}
             </div>
         )
     }
