@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import Question from "../Question"
+import "./FormViewer.css"
 
 const form = {
     "_id": "58a6e353702e7410f4a33ee2",
@@ -35,10 +36,11 @@ export default class FormViewer extends Component {
             type={el.type} possblAns={el.possblAns} key={el._id}/>
         });
         return (
-            <div>
-                {form.title} {"\n"}
-                {form.description} {"\n"}
-                {questions}
+            <div className="FormViewer">
+                <h1>{form.title}</h1> 
+                <div>{form.description}</div>
+                <hr />
+                <div>{questions}</div>
             </div>
         )
     }

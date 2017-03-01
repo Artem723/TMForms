@@ -1,0 +1,17 @@
+input {
+    width: 100%;
+    display: block;
+    margin: 20px 0px;
+}
+.LogIn-container {
+    width: 300px;
+    margin: 100px auto;
+    border: 1px solid black;
+    padding: 10px;
+    
+}
+.LogIn-signin-btn {
+    margin: 0px auto;
+    display: block;
+
+}

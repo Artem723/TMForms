@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import SearchBar from "../SearchBar"
 import FormTile from "../FormTile"
+import "./Dashboard.css"
 
 let forms = [
   {
@@ -26,7 +27,7 @@ export default class Dashboard extends Component {
       return <FormTile key={el._id} title={el.title} />
     })
     return (
-      <div>
+      <div className="Dashboard">
         <SearchBar />
         {tiles}
       </div>

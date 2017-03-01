@@ -10,6 +10,7 @@ export default class HeaderLoggedIn extends Component {
                 <span><button>Home</button></span>
                 {' '}hello, {login}!{' '}
                 <span><button>Exit</button></span>
+                <hr />
             </div>
         )
     }

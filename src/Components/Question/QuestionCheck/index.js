@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import "../Question.css"
 
 export default class QuestionCheck extends Component {
     render() {
@@ -11,9 +12,9 @@ export default class QuestionCheck extends Component {
             )
         });
         return (
-            <div>
-                {questionText}{"\n"}
-                {answers}
+            <div className="Question">
+                <div>questionText</div>
+                <div>answers</div>
             </div>
         )
     }

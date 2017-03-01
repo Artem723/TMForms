@@ -1,0 +1,20 @@
+.questionEdit-container {
+    width: 600px;
+    border: 1px solid black;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.questionEdit-content {
+   
+    display: inline-block;
+}
+
+.questionEdit-settings {
+    display: inline-block;
+    height: 100%;
+}
+.questionEdit-answer {
+    display: block;
+    margin: 5px;
+}
