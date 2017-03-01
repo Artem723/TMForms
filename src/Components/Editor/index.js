@@ -39,6 +39,7 @@ export default class Editor extends Component {
                 <div>{form.description}</div>
                 <button>Results</button>{" "}<button>Save</button>
                 {questions}
+                <button>Add</button>
             </div>
         )
     }

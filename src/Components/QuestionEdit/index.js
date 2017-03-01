@@ -6,13 +6,15 @@ export default class QuestionEdit extends Component {
     render() {
         const {questionText, possblAns, type} = this.props;
         let answers;
-        if (type === "string")
+        let button;
+        if (type === "string") {
             answers = (
                 <label className="questionEdit-answer">
-                    <input type="text" />
+                    <input type="text" value=""/>
                 </label>
             )
-        else
+            button = null;
+        } else {
             answers = possblAns.map((el) => {
                 const inputType = (type === "check") ? "checkbox" : "radio";
                 return <label className="questionEdit-answer">
@@ -20,13 +22,14 @@ export default class QuestionEdit extends Component {
                     <input type="text" value={el} />
                 </label>
             });
-        
+            button = <button>Add</button>;
+        }
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">
                     <input type="text" value={questionText} />
                     {answers}
-                    <button>Add</button>
+                    {button}
                 </div>
                 <div className="questionEdit-settings">
                     <select value={type}>
