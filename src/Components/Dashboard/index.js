@@ -3,32 +3,63 @@ import SearchBar from "../SearchBar"
 import FormTile from "../FormTile"
 import "./Dashboard.css"
 
-let forms = [
-  {
-    "_id": "58a6e345702e7410f4a33ed6",
-    "title": "title 1"
-  },
-  {
-    "_id": "58a6e349702e7410f4a33eda",
-    "title": "title 2"
-  },
-  {
-    "_id": "58a6e34c702e7410f4a33ede",
-    "title": "title 3"
-  },
-  {
-    "_id": "58a6e353702e7410f4a33ee2",
-    "title": "The best title"
-  }
-];
+
 export default class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      forms: [],
+      searchText: ""
+    }
+    this.onChangeSearchText = this.onChangeSearchText.bind(this);
+  }
+  componentDidMount() {
+    //TODO fetch data from server
+    this.setState({
+      forms: [
+        {
+          "_id": "58a6e345702e7410f4a33ed6",
+          "title": "Hello"
+        },
+        {
+          "_id": "58a6e349702e7410f4a33eda",
+          "title": "Hello2"
+        },
+        {
+          "_id": "58a6e34c702e7410f4a33ede",
+          "title": "Hello3"
+        },
+        {
+          "_id": "58a6e353702e7410f4a33ee2",
+          "title": "The best title"
+        }
+      ]
+    })
+  }
+  onChangeSearchText(e) {
+    console.log(e.target.value)
+    this.setState({
+      searchText: e.target.value
+    })
+  }
   render() {
-    const tiles = forms.map((el) => {
+    let renderForms;
+    const {searchText, forms} = this.state;
+    if (!searchText) {
+      renderForms = forms;
+    } else {
+      const re = new RegExp(searchText)
+      renderForms = forms.filter((el) => {
+        return re.test(el.title);
+      });
+      console.log("hello")
+    }
+    const tiles = renderForms.map((el) => {
       return <FormTile key={el._id} title={el.title} />
     })
     return (
       <div className="Dashboard">
-        <SearchBar />
+        <SearchBar searchText={this.state.searchText} onChange={this.onChangeSearchText} />
         {tiles}
       </div>
     )

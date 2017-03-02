@@ -4,8 +4,6 @@ let connection = require("../connection");
 var ObjectId = connection.Types.ObjectId;
 
 let Form = (require("../models/Form"))(connection);
-//let QuestionString = (require("../models/QuestionString"))(connection);
-//let QuestionVariety = (require("../models/QuestionVariety"))(connection);
 let middlewares = require("./middlewares");
 let verifyToken = middlewares.verifyToken;
 let findUser = middlewares.findUser;

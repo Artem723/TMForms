@@ -3,11 +3,12 @@ import "./SearchBar.css"
 
 export default class SearchBar extends Component {
     render() {
+        const {searchText, onChange} = this.props;
         return (
-            <div className="SearchBar">
+            <div className="SearchBar" >
                 Dashboard
-            {" "}<input type="text"/>
-            {" "}<button>Ok</button>
+            {" "}<input type="text" value={searchText} onChange={onChange}/>
+            {/*{" "}<button>Ok</button>*/}
             {" "}<button>NEW</button>
             </div>
         )

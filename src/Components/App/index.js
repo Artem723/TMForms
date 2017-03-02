@@ -9,12 +9,19 @@ let data = {
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      token: window.localStorage.getItem("token")
+    };
+
+  }
   render() {
 
     return (
       <div className="App">
-        <Header {...this.props} token={data.token}/>
-        {React.cloneElement(this.props.children, data)}
+        <Header {...this.props} token={this.state.token}/>
+        {React.cloneElement(this.props.children, this.state)}
         <Footer />
       </div>
     );
