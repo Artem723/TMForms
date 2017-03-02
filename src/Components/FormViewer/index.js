@@ -36,7 +36,7 @@ export default class FormViewer extends Component {
             type={el.type} possblAns={el.possblAns} key={el._id}/>
         });
         return (
-            <div className="FormViewer">
+            <div className="FormViewer-container">
                 <h1>{form.title}</h1> 
                 <div>{form.description}</div>
                 <hr />

@@ -1,10 +1,11 @@
 import React, { Component } from "react"
 import ResultBlock from "../ResultBlock"
+import "./Results.css"
 
 const data = [
     {
         id: 0,
-        type: "radio",
+        type: "check",
         question: "What fruit do you like?",
         possblAns: ["Apple", "Lemon", "Melon", "Mango"],
         usersAns: {
@@ -16,14 +17,18 @@ const data = [
     },
     {
         id: 1,
-        type: "check",
+        type: "radio",
         question: "What fruit do you like?",
-        possblAns: ["Apple", "Lemon", "Melon", "Mango"],
+        possblAns: ["Apple", "Lemon", "Melon", "Mango","Apple1", "Lemon1", "Melon1", "Mango1"],
         usersAns: {
             Apple: 30,
             Lemon: 20,
             Melon: 45,
-            Mango: 15
+            Mango: 15,
+            Apple1: 30,
+            Lemon1: 20,
+            Melon1: 45,
+            Mango1: 15
         }
     },
     {
@@ -41,7 +46,8 @@ export default class Results extends Component {
             return <ResultBlock {...el} key={el.id}/>
         })
         return (
-            <div className="Results">
+            <div className="Results-container">
+                <button>Edit</button>
                 {resBlocks}
             </div>
         )

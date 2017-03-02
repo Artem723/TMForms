@@ -35,6 +35,14 @@ export default class Editor extends Component {
         })
         return (
             <div className="Editor">
+                <div className="Editor-link">
+                    <div>
+                        Link:
+                    </div>
+                    <div>
+                        {"http://localhost:3000/forms/" + form._id}
+                    </div>
+                </div>
                 <h1>{form.title}</h1>
                 <div>{form.description}</div>
                 <button>Results</button>{" "}<button>Save</button>
