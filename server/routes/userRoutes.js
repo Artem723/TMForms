@@ -159,7 +159,9 @@ userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, r
         return {
             type: q.type,
             possblAns: q.possblAns,
-            usersAns: q.usersAns
+            usersAns: q.usersAns,
+            id: q.id,
+            checkRadioAns: q.checkRadioAns
         }
     });
     res.json(resArr).end();

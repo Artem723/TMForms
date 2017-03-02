@@ -115,7 +115,7 @@ apiRoutes.route("/forms/:id")
          * [
          *  {
          *      id: String,
-         *      usersAns: [Number], Number or String
+         *      usersAns: [String] or String
          *  }
          * ]
          */
@@ -126,22 +126,13 @@ apiRoutes.route("/forms/:id")
             return;
         };
         req.body.forEach(function (el) {
-            // let question = form.questions.find(function(q){
-            //     console.log(q._id + "---" + el.id + ": " + (q._id == el.id));
-            //     if(q._id == el.id) return true;
-            // });
-            // try {
-            //     console.log(question.__proto__);
-            //     question.addUserAnswer(el.usersAns);
-            // }
-            // catch(err) {
-            //     console.log("error occured " + err);
-            // }
             let question = form.questions.id(el.id);
             //console.log("Question: " + question);
             if (question === null) return;
             question.addUserAnswer(el.usersAns);
+                
         });
+        
         form.save(function (err) {
             if (err) {
                 res.status(500).json({ message: "Internal server Error." }).end();
@@ -159,7 +150,8 @@ apiRoutes.route("/forms/:id")
             return;
         }
         form.questions.forEach(function (el) {
-            el.usersAns = undefined;
+            el.usersAns = null;
+            el.checkRadioAns = null;
         });
         res.json(form).end();
 
@@ -177,7 +169,8 @@ apiRoutes.route("/forms/:id")
     checkPermission,
     function (req, res) {
         req.form.questions.forEach(function (el) {
-            el.usersAns = undefined;
+            el.usersAns = null;
+            el.checkRadioAns = null;
         });
         res.json(req.form).end();
     });

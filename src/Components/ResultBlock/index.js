@@ -11,7 +11,7 @@ export default class ResultBlock extends Component {
         } else {
             const chartType = (type === "check") ? "bar" : "pie";
             const data = possblAns.map((el) => {
-                return usersAns[el];
+                return usersAns[el] || 0;
             });
             const ctx = document.getElementById("myChart" + id);
             ChartWrapper(ctx, chartType, possblAns, data);

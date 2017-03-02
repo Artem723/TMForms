@@ -6,59 +6,49 @@ let questionSchema = new Schema({
     questionText: String,
     possblAns: [String],
     type: String, // 'string', radio' or 'check'
-    usersAns: [] // type only Number of String
-});
+    usersAns: [String], // type only  String, fill only with string type 
+    checkRadioAns: {} //contain answer-value pair of user answers, fill only with radio and check type
+},{ minimize: false });
 
 /**
 * Adds user's answer to Data Base
-* @param  {String, Array, Number} ans {user answer, data type depends on question type}
+* @param  {String, Array of String} ans {user answer, data type depends on question type}
 * 
 */
 questionSchema.methods.addUserAnswer = function (ans) {
-    // switch (this.type) {
-    //     case "radio":
-    //         //ans is zero-based index of possible answer
-    //         if (typeof ans == ! "number")
-    //             throw new Error("User answer must be type of Number, in question type 'radio'; got: " + ans + "; type" + typeof ans);
-    //         if (ans >= this.possblAns.length)
-    //             throw new Error("User answer is invalid: got " + ans + "; expected zero-based number less then " + this.possblAns.length);
-    //         this.usersAns.push(ans);
-    //         break;
 
-    //     case "check":
-    //         if (ans.constructor !== Array)
-    //             throw new Error("User answer must be type of Array, in question type 'check'; got: " + ans + "; type" + typeof ans);
-    //         ans.forEach(function (element) {
-    //             if (element >= this.possblAns.length)
-    //                 throw new Error("User answer is invalid: got " + element + "; expected zero-based number less then " + this.possblAns.length);
-    //             this.userAns.push(element);
-    //         });
-    //         break;
-    // }
     let self = this;
     switch (this.type) {
         case "radio":
-            //ans is zero-based index of possible answer
-            if (typeof ans !== "number")
+            
+            if (typeof ans !== "string")
                 return;
-            if (ans >= this.possblAns.length || ans < 0)
-                return;
-            this.usersAns.push(ans);
+           
+            //check if answer exist in possble Answers and if so incrimenting value in self.checkRadioAns[el]
+            if(this.possblAns.indexOf(ans) !== -1) {
+
+                this.checkRadioAns[ans] ? this.checkRadioAns[ans]++ : this.checkRadioAns[ans] = 1 ;   
+            }
+            this.markModified("checkRadioAns." + ans);
             break;
 
         case "check":
             if (ans.constructor !== Array)
                 return;
             ans.forEach(function(el){
-                if(typeof el !== "number") return;
-                if(el >= self.possblAns.length || el < 0) return;
-                self.usersAns.push(el);
+                if(typeof el !== "string") return;
+                //check if answer exist in possble Answers as well as radio type
+                if(self.possblAns.indexOf(el) !== -1) {
+                self.checkRadioAns[el] ? self.checkRadioAns[el]++ : self.checkRadioAns[el] = 1 ;
+                self.markModified("checkRadioAns." + el);
+            }
             });
             break;
         case "string":
             if(typeof ans !== "string") return;
             this.usersAns.push(ans);
     }
+    
     //this.save();
     /*if(ans < 0 || ans >= this.possblAns.length) throw new Error("User answer is invalid: got " + ans + "; expected zero-based number less then " + possblAns.length);
     this.usersAns.push(ans);*/

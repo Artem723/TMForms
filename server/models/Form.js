@@ -8,7 +8,8 @@ let formSchema = new Schema({
     description: String,
     questions: [QuestionSchema],
     isOpen: Boolean
-});
+},{ minimize: false });
+let Question = mongoose.model('question', QuestionSchema);
 /**
  * Method validates and adds the questions to document. This method doesn't save changes.
 * @param  {Array} questions {array of questions that need to be added to document}
@@ -25,7 +26,9 @@ formSchema.methods.addQuestions = function (questions) {
             if (q.possblAns.length > 0) q.possblAns = [];
         }
         else return;
+        q.checkRadioAns = {};//checkRadioAns have to always store in db
         self.questions.push(q);
+
     })
 }
 
