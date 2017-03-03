@@ -5,12 +5,18 @@ import QuestionString from "./QuestionString"
 
 export default class Question extends Component {
     render() {
-        let {possblAns, questionText, type} = this.props;
+        const {possblAns, questionText, type, answers, onChange} = this.props;
+        const props = {
+            questionText,
+            possblAns,
+            answers,
+            onChange
+        }
         let question;
         switch(type) {
-            case "radio": question = <QuestionRadio questionText={questionText} possblAns={possblAns}/>; break;
-            case "check": question = <QuestionCheck questionText={questionText} possblAns={possblAns}/>; break;
-            case "string": question = <QuestionString questionText={questionText}/>;break;
+            case "radio": question = <QuestionRadio {...props} />; break;
+            case "check": question = <QuestionCheck {...props}/>; break;
+            case "string": question = <QuestionString {...props}/>;break;
             default:
                 question = null;
         }        
@@ -22,5 +28,10 @@ export default class Question extends Component {
 React.propTypes = {
     questionText: React.PropTypes.string.isRequired,
     possblAns: React.PropTypes.array.isRequired,
-    type: React.PropTypes.oneOf(["radio", "string", "check"]).isRequired
+    type: React.PropTypes.oneOf(["radio", "string", "check"]).isRequired,
+    answers: React.PropTypes.oneOfType([
+        React.PropTypes.arrayOf(React.PropTypes.string),
+        React.PropTypes.string
+    ]).isRequired,
+    onChange: React.PropTypes.func.isRequired
 }

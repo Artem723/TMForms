@@ -3,18 +3,19 @@ import "../Question.css"
 
 export default class QuestionCheck extends Component {
     render() {
-        let {possblAns, questionText} = this.props;
-        let answers = possblAns.map((el) => {
+        const {possblAns, questionText, answers, onChange} = this.props;
+        const answersList = possblAns.map((el, ind) => {
             return (
-                <label>{el}
-                    <input type="checkbox" name={el} />
+                <label key={ind}>
+                    <input type="checkbox" name={el} checked={answers.indexOf(el)!==-1} onChange={onChange}/>
+                    {el}
                 </label>
             )
         });
         return (
             <div className="Question">
-                <div>questionText</div>
-                <div>answers</div>
+                <div>{questionText}</div>
+                <div>{answersList}</div>
             </div>
         )
     }
@@ -22,5 +23,7 @@ export default class QuestionCheck extends Component {
 
 React.propTypes = {
     questionText: React.PropTypes.string.isRequired,
-    possblAns: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+    possblAns: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    answers: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    onChange: React.PropTypes.func.isRequired
 }

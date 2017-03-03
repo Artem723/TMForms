@@ -3,16 +3,18 @@ import "../Question.css"
 
 export default class QuestionString extends Component {
     render() {
-        const questionText = this.props.questionText;
+        const {questionText, answers, onChange} = this.props;
         return (
             <div className="Question">
                 <div>{questionText}</div>
-                <input type="text"/>
+                <input type="text" value={answers} onChange={onChange}/>
             </div>
         )
     }
 }
 
 React.propTypes = {
-    questionText: React.PropTypes.string.isRequired
+    questionText: React.PropTypes.string.isRequired,
+    answers: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired
 }

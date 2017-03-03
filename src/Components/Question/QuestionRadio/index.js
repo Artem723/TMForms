@@ -3,11 +3,11 @@ import "../Question.css"
 
 export default class QuestionRadio extends Component {
     render() {
-        let {possblAns, questionText} = this.props;
-        let answers = possblAns.map((el) => {
+        const {possblAns, questionText, answers, onChange} = this.props;
+        const answersList = possblAns.map((el, ind) => {
             return (
-                <label>
-                    <input type="radio" name={el} />
+                <label key={ind}>
+                    <input type="radio" name={el} checked={el === answers} onChange={onChange}/>
                     {el}
                 </label>
             )
@@ -15,7 +15,7 @@ export default class QuestionRadio extends Component {
         return (
             <form className="Question">
                 <div>{questionText}</div>
-                <div>{answers}</div>
+                <div>{answersList}</div>
             </form>
         )
     }
@@ -23,5 +23,7 @@ export default class QuestionRadio extends Component {
 
 React.propTypes = {
     questionText: React.PropTypes.string.isRequired,
-    possblAns: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+    possblAns: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    answers: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired
 }

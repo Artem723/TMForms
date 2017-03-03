@@ -21,6 +21,7 @@ formSchema.methods.addQuestions = function (questions) {
         if (typeof q.questionText !== "string" || typeof q.type !== "string" || !Array.isArray(q.possblAns)) return;
         if (q.type === "check" || q.type === "radio") {
             if (q.possblAns.length === 0) return;
+            //TODO check possblAns on unique values(use Set)
         }
         else if (q.type === "string") {
             if (q.possblAns.length > 0) q.possblAns = [];
