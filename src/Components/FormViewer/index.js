@@ -50,17 +50,14 @@ export default class FormViewer extends Component {
         this.onChangeHandler = this.onChangeHandler.bind(this);
         this.onSendHandler = this.onSendHandler.bind(this);
     }
-    onChangeHandler(id, e) {
-        const questions = this.state.questions.map((el) => el);
-        const indOfQestion = questions.findIndex((q) => {
-            return q._id === id;
-        });
+    onChangeHandler(indOfQestion, e) {
+        const questions = this.state.questions.slice();
         const question = questions[indOfQestion];
         //if not found - escape from function
         if (!question) return;
         const target = e.target;
         const value = (target.type === 'checkbox' || target.type === 'radio') ? target.name : target.value;
-        console.log(id + "   " + value + "  ");
+        //console.log(id + "   " + value + "  ");
         switch (question.type) {
             case "string": question.answers = value; break;
             case "check":
@@ -97,10 +94,10 @@ export default class FormViewer extends Component {
                 </div>
             )
         } else {
-            const questionList = questions.map((el) => {
+            const questionList = questions.map((el, ind) => {
                 return <Question questionText={el.questionText}
                     type={el.type} possblAns={el.possblAns} key={el._id} answers={el.answers}
-                    onChange={(e) => this.onChangeHandler(el._id, e)} />
+                    onChange={(e) => this.onChangeHandler(ind, e)} />
             });
             body = (
                 <div className="FormViewer-container">
@@ -112,7 +109,7 @@ export default class FormViewer extends Component {
                 </div>
             )
         }
-        
-        return {body}
+        console.log(body);
+        return body;
     }
 }
