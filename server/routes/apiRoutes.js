@@ -115,7 +115,7 @@ apiRoutes.route("/forms/:id")
          * [
          *  {
          *      id: String,
-         *      usersAns: [String] or String
+         *      answers: [String] or String
          *  }
          * ]
          */
@@ -129,7 +129,7 @@ apiRoutes.route("/forms/:id")
             let question = form.questions.id(el.id);
             //console.log("Question: " + question);
             if (question === null) return;
-            question.addUserAnswer(el.usersAns);
+            question.addUserAnswer(el.answers);
                 
         });
         

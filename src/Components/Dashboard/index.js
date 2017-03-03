@@ -52,7 +52,6 @@ export default class Dashboard extends Component {
       renderForms = forms.filter((el) => {
         return re.test(el.title);
       });
-      console.log("hello")
     }
     const tiles = renderForms.map((el) => {
       return <FormTile key={el._id} title={el.title} />
