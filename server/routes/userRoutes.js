@@ -150,16 +150,30 @@ userRoutes.route("/forms/:id")
 
         })
     });
-
+/**
+ * Route sends results to client as JSON object in the following format:
+ *  {
+ *      type: String, one of {"check", "radio" or "string"}, 
+ *      possblAns: Array, if type is "string" it'll be empty array, otherwise array of possible answers,
+ *      usersAns: Array or Object, depends on type: if type is "string", usersAns will be Array, otherwise - Object, that will contain pair {answer: count}  
+ *      id: String, id of question,
+ *      questionText: String
+ *  }
+ */
 userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, res) {
     let form = req.form;
     let resArr = form.questions.map(function (q) {
+        let answers;
+        if(q.type === "string")
+            answers = q.usersAns;
+        else 
+            answers = q.checkRadioAns;
         return {
             type: q.type,
             possblAns: q.possblAns,
-            usersAns: q.usersAns,
+            usersAns: answers,
             id: q.id,
-            checkRadioAns: q.checkRadioAns
+            questionText: q.questionText
         }
     });
     res.json(resArr).end();

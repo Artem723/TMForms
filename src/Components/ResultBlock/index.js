@@ -4,7 +4,7 @@ import ChartWrapper from "./ChartWrapper"
 export default class ResultBlock extends Component {
     componentDidMount() {
         //TODO initialize chart
-        const { question, numOfAns, usersAns, possblAns, type, id } = this.props;
+        const { questionText, numOfAns, usersAns, possblAns, type, id } = this.props;
         let answers;
         if (type === "string") {
             return;
@@ -18,7 +18,7 @@ export default class ResultBlock extends Component {
         }
     }
     render() {
-        const { question, numOfAns, usersAns, possblAns, type, id } = this.props;
+        const { questionText, numOfAns, usersAns, possblAns, type, id } = this.props;
         let answer;
         let list;
         if (type !== "string") {
@@ -37,7 +37,7 @@ export default class ResultBlock extends Component {
         return (
             <div className="ResultBlock">
                 <h1>
-                    {question}{" "}
+                    {questionText}{" "}
                     <span>Number of answers: {numOfAns}</span>
                 </h1>
                 {answer}
@@ -46,7 +46,7 @@ export default class ResultBlock extends Component {
     }
 }
 ResultBlock.propTypes = {
-    question: React.PropTypes.string.isRequired,
+    questionText: React.PropTypes.string.isRequired,
     numOfAns: React.PropTypes.number,
     usersAns: React.PropTypes.oneOfType([
         React.PropTypes.arrayOf(React.PropTypes.string),

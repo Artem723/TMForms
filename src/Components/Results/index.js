@@ -6,7 +6,7 @@ const data = [
     {
         id: 0,
         type: "check",
-        question: "What fruit do you like?",
+        questionText: "What fruit do you like?",
         possblAns: ["Apple", "Lemon", "Melon", "Mango"],
         usersAns: {
             Apple: 30,
@@ -18,7 +18,7 @@ const data = [
     {
         id: 1,
         type: "radio",
-        question: "What fruit do you like?",
+        questionText: "What fruit do you like?",
         possblAns: ["Apple", "Lemon", "Melon", "Mango","Apple1", "Lemon1", "Melon1", "Mango1"],
         usersAns: {
             Apple: 30,
@@ -34,7 +34,7 @@ const data = [
     {
         id: 2,
         type: "string",
-        question: "What fruit do you like?",
+        questionText: "What fruit do you like?",
         possblAns: [],
         usersAns: ["Apple", "Lemon", "Melon", "Mango"]
     }

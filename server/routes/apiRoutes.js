@@ -115,7 +115,7 @@ apiRoutes.route("/forms/:id")
          * [
          *  {
          *      id: String,
-         *      answers: [String] or String
+         *      answers: [String] or String, must be Array, if question type is "check"
          *  }
          * ]
          */
