@@ -120,6 +120,7 @@ userRoutes.route("/forms/:id")
         form.title = body.title;
         form.description = body.description;
         form.isOpen = body.isOpen;
+        //save user's answers into buffer to restore
         form.questions = [];
         form.addQuestions(body.questions);
         form.save(function (err) {

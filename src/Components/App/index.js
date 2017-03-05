@@ -17,7 +17,6 @@ class App extends Component {
 
   }
   render() {
-
     return (
       <div className="App">
         <Header {...this.props} token={this.state.token}/>

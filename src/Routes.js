@@ -24,8 +24,8 @@ let routes = (
                 <Route path="/forms/:id/results" component={Results} />
             </Route>
             <Route path="/forms/:id" component={FormViewer} />
-            <Route path="/logIn" component={LogIn} />
-            <Route path="/SignUp" component={SignUp} />
+            <Route path="/login" component={LogIn} />
+            <Route path="/signup" component={SignUp} />
             <Route path="*" component={NoMatch} />
         </Route>
     </Router>
