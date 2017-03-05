@@ -70,6 +70,7 @@ export default class FormViewer extends Component {
                 }
                 break;
             case "radio": question.answers = value; break;
+            default : ; 
         }
         questions[indOfQestion] = question;
         this.setState({

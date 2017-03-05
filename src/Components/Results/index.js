@@ -19,7 +19,7 @@ const data = [
         id: 1,
         type: "radio",
         questionText: "What fruit do you like?",
-        possblAns: ["Apple", "Lemon", "Melon", "Mango","Apple1", "Lemon1", "Melon1", "Mango1"],
+        possblAns: ["Apple", "Lemon", "Melon", "Mango", "Apple1", "Lemon1", "Melon1", "Mango1"],
         usersAns: {
             Apple: 30,
             Lemon: 20,
@@ -40,14 +40,21 @@ const data = [
     }
 ];
 export default class Results extends Component {
+    constructor(props) {
+        super(props);
+        this.onEdit = this.onEdit.bind(this);
+    }
+    onEdit() {
+        this.props.router.replace("/forms/" + this.props.params.id + "/edit");
+    }
     render() {
         const resBlocks = data.map((el) => {
             //const {type, id, question, possblAns, usersAns} = el;
-            return <ResultBlock {...el} key={el.id}/>
+            return <ResultBlock {...el} key={el.id} />
         })
         return (
             <div className="Results-container">
-                <button>Edit</button>
+                <button onClick={this.onEdit}>Edit</button>
                 {resBlocks}
             </div>
         )

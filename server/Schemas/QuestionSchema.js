@@ -46,6 +46,8 @@ questionSchema.methods.addUserAnswer = function (ans) {
             break;
         case "string":
             if(typeof ans !== "string") return;
+            //validation of string 
+            ans = ans.length>50 ? ans.slice(0,50) : ans;
             this.usersAns.push(ans);
     }
     

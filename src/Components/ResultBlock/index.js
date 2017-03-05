@@ -4,8 +4,7 @@ import ChartWrapper from "./ChartWrapper"
 export default class ResultBlock extends Component {
     componentDidMount() {
         //TODO initialize chart
-        const { questionText, numOfAns, usersAns, possblAns, type, id } = this.props;
-        let answers;
+        const {  usersAns, possblAns, type, id } = this.props;
         if (type === "string") {
             return;
         } else {
@@ -18,7 +17,7 @@ export default class ResultBlock extends Component {
         }
     }
     render() {
-        const { questionText, numOfAns, usersAns, possblAns, type, id } = this.props;
+        const { questionText, numOfAns, usersAns, type, id } = this.props;
         let answer;
         let list;
         if (type !== "string") {
