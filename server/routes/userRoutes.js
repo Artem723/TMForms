@@ -15,16 +15,16 @@ let userRoutes = express.Router();
 
 userRoutes.use(verifyToken);
 userRoutes.use(findUser);
-
+/**
+ * This middleware returns to client array object with the following structure: 
+ *  {
+ *     _id: String,
+ *      title: string
+ *  }
+ * 
+ */
 userRoutes.get("/forms", function (req, res) {
     //return to client array of object {_id, title}
-    // let user = req.user;
-    // let arrOfFormsId = [];
-    // user.forms.forEach(function (element) {
-    //     arrOfFormsId.push(element);
-    // });
-
-
     let options = {
         path: "forms",
         select: "title",
@@ -95,7 +95,7 @@ userRoutes.post("/forms", function (req, res) {
 
 userRoutes.route("/forms/:id")
     .all(checkPermission)
-    .put(findForm, function (req, res) {
+    .put(/*findForm,*/ function (req, res) {
         /** req.body should be
          * {
          *  isOpen: Boolean,
@@ -139,7 +139,6 @@ userRoutes.route("/forms/:id")
                 res.status(500).json({ message: "Internal server error. Can't delete form." }).end();
                 throw err;
             }
-            console.log(req.params.id);
             req.user.forms.pull(new ObjectId(req.params.id));
             req.user.save(function (err) {
                 if (err) {
@@ -165,9 +164,9 @@ userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, r
     let form = req.form;
     let resArr = form.questions.map(function (q) {
         let answers;
-        if(q.type === "string")
+        if (q.type === "string")
             answers = q.usersAns;
-        else 
+        else
             answers = q.checkRadioAns;
         return {
             type: q.type,

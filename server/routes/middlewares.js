@@ -12,7 +12,12 @@ let Form = (require("../models/Form"))(connection);
 * 
 */
 function findForm(req, res, next) {
-    Form.findById(req.params.id, function (err, form) {
+    const id = req.params.id;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        res.status(404).end();
+        return;
+    }
+    Form.findById(id, function (err, form) {
         if (err) {
             res.status(500).json({ message: "Internal server error" }).end();
             throw err;
@@ -36,7 +41,7 @@ function verifyToken(req, res, next) {
     //DONE add user.login to req.userLogin
     //let token = req.body.token;
     let authHeader = req.get("Authorization");
-    if(!authHeader) {
+    if (!authHeader) {
         res.status(401).end();
         return;
     }

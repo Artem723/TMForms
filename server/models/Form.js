@@ -18,6 +18,8 @@ let Question = mongoose.model('question', QuestionSchema);
 formSchema.methods.addQuestions = function (questions) {
     let self = this;
     questions.forEach(function (q) {
+        //questions souldn't contain id field
+        if(q._id) q._id = undefined;
         if (typeof q.questionText !== "string" || typeof q.type !== "string" || !Array.isArray(q.possblAns)) return;
         if (q.type === "check" || q.type === "radio") {
             if (q.possblAns.length === 0) return;

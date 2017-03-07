@@ -16,17 +16,18 @@ export default class QuestionEdit extends Component {
             onDeleteQuestion,
             onCopyQuestion,
             onBlurAnswer,
-            onBlurQuestionText
+            onBlurQuestionText,
+            numOfQuestions
         } = this.props;
         let answers;
-        let button;
+        let addAnswerButton;
         if (type === "string") {
             answers = (
                 <label className="questionEdit-answer">
                     <input type="text" value="user answer" /*DELETE LATER*/ /*onChange={()=>{}}*/ readOnly /*DELETE LATER*/ /> {/*onChange callback added  to remove the warning*/}
                 </label>
             )
-            button = null;
+            addAnswerButton = null;
         } else {
             const length = possblAns.length;
             answers = possblAns.map((el, ind, arr) => {
@@ -40,14 +41,15 @@ export default class QuestionEdit extends Component {
                     </label>
                 )
             });
-            button = (length < 15) ? <button onClick={onAddAnswer}>Add</button> : null;
+            addAnswerButton = (length < 15) ? <button onClick={onAddAnswer}>Add</button> : null;
         }
+        const delQuestionButton = numOfQuestions >1 ? <button onClick={onDeleteQuestion}>delete</button> : null;
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">
                     <input type="text" value={questionText} onChange={onChangeQuestionText} onBlur={onBlurQuestionText} />
                     {answers}
-                    {button}
+                    {addAnswerButton}
                 </div>
                 <div className="questionEdit-settings">
                     <select value={type} onChange={onChangeType}>
@@ -55,8 +57,8 @@ export default class QuestionEdit extends Component {
                         <option value="check">checkbox</option>
                         <option value="radio">radio button</option>
                     </select>
-                    <button onClick={onDeleteQuestion}>delete</button>{" "}
-                    <button onClick={onCopyQuestion}>copy</button>
+                    <button onClick={onCopyQuestion}>copy</button>{" "}
+                    {delQuestionButton}
                 </div>
             </div>
         )
@@ -67,6 +69,7 @@ QuestionEdit.propTypes = {
     questionText: React.PropTypes.string.isRequired,
     possblAns: React.PropTypes.array.isRequired,
     type: React.PropTypes.oneOf(["radio", "string", "check"]).isRequired,
+    numOfQuestions: React.PropTypes.number,
     onChangeAnswer: React.PropTypes.func.isRequired,
     onChangeQuestionText: React.PropTypes.func.isRequired,
     onAddAnswer: React.PropTypes.func.isRequired,

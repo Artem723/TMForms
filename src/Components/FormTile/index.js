@@ -1,21 +1,23 @@
 import React, { Component } from "react"
-import { Link } from "react-router"
+//import { Link } from "react-router"
 import "./FormTile.css"
 
 export default class FormTile extends Component {
     render() {
-        let {title} = this.props;
+        let {title, onDeleteHandler, onGoToFormHAndler} = this.props;
         return (
-            <Link to="/forms/awdawd/edit">
+            <div onClick={onGoToFormHAndler}>
                 <div className="FormTile">
                     <div>{title}</div>
-                    <button>delete</button>
+                    <button onClick={onDeleteHandler}>delete</button>
                 </div>
-            </Link>
+            </div>
         )
     }
 }
 
 FormTile.propTypes = {
     title: React.PropTypes.string.isRequired,
+    onDeleteHandler: React.PropTypes.func.isRequired,
+    onGoToFormHAndler: React.PropTypes.func.isRequired
 }

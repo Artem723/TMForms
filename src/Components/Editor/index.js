@@ -1,46 +1,51 @@
 import React, { Component } from "react"
 import QuestionEdit from "../QuestionEdit"
 import "./Editor.css"
-
+// const form = {
+//     "_id": "58a6e353702e7410f4a33ee2",
+//     "title": "The best title",
+//     "description": "The best description",
+//     "isOpen": true,
+//     "questions": [
+//         {
+//             "questionText": "How are youTest?",
+//             "type": "string",
+//             "_id": "58a6e8ff9070be11bc9466b1",
+//             "possblAns": []
+//         },
+//         {
+//             "questionText": "Where are you from?",
+//             "type": "radio",
+//             "_id": "58a6e8ff9070be11bc9466b2",
+//             "possblAns": [
+//                 "Brest",
+//                 "Minsk",
+//                 "Grodno",
+//                 "Amsterdam"
+//             ]
+//         },
+//         {
+//             "questionText": "Where are you from?",
+//             "type": "check",
+//             "_id": "58a6e8ff9070be11bc9466b3",
+//             "possblAns": [
+//                 "Brest",
+//                 "Minsk",
+//                 "Grodno",
+//                 "Amsterdam"
+//             ]
+//         }
+//     ]
+// }
 export default class Editor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            "_id": "58a6e353702e7410f4a33ee2",
-            "title": "The best title",
-            "description": "The best description",
-            "isOpen": true,
-            "questions": [
-                {
-                    "questionText": "How are youTest?",
-                    "type": "string",
-                    "_id": "58a6e8ff9070be11bc9466b1",
-                    "possblAns": []
-                },
-                {
-                    "questionText": "Where are you from?",
-                    "type": "radio",
-                    "_id": "58a6e8ff9070be11bc9466b2",
-                    "possblAns": [
-                        "Brest",
-                        "Minsk",
-                        "Grodno",
-                        "Amsterdam"
-                    ]
-                },
-                {
-                    "questionText": "Where are you from?",
-                    "type": "check",
-                    "_id": "58a6e8ff9070be11bc9466b3",
-                    "possblAns": [
-                        "Brest",
-                        "Minsk",
-                        "Grodno",
-                        "Amsterdam"
-                    ]
-                }
-            ],
-            deleted: []
+            "title": "",
+            "description": "",
+            "isOpen": false,
+            "questions": [],
+            isLoading: false
         }
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
@@ -56,8 +61,68 @@ export default class Editor extends Component {
         this.onBlurAnswer = this.onBlurAnswer.bind(this);
         this.onBlurQuestionText = this.onBlurQuestionText.bind(this);
     }
-    componentDidmount() {
-       
+    componentDidMount() {
+        const formId = this.props.params.id;
+        if (formId === "new-form") {
+            //create new form
+            this.setState({
+                title: "Form title",
+                description: "Form description",
+                isOpen: true,
+                questions: [
+                    {
+                        questionText: "Question",
+                        type: "check",
+                        __key: Date.now(),
+                        possblAns: ["Answer 1"]
+                    }
+                ]
+            })
+        } else {
+            //load form from server
+            this.setState({
+                isLoading: true
+            })
+            const headers = {
+                "Authorization": `Bearer ${this.props.token}`
+            }
+            const option = {
+                method: "GET",
+                headers
+            }
+            let status;
+            fetch(`/api/forms/${formId}`, option)
+                .then((response) => {
+                    this.setState({
+                        isLoading: false
+                    })
+                    status = response.status;
+                    if (status === 200)
+                        return response.json();
+                    else if (status === 500)
+                        alert("internal server Error");
+                    else if (status === 404)
+                        alert("Form not found!");
+                    else if (status === 403)
+                        alert("Permission denied");
+                    else if (status === 401) {
+                        alert("Wrong token");
+                        this.props.onLogOutHandler();
+                    }
+                })
+                .then((body) => {
+                    const { title, description, isOpen, questions } = body;
+                    this.setState({
+                        title,
+                        description,
+                        isOpen,
+                        questions
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
     }
 
     onChangeTitle(e) {
@@ -185,7 +250,66 @@ export default class Editor extends Component {
     }
 
     onSaveHandler() {
-        //this.props.router.replace("/forms/blabla/edit");
+        let method, path;
+        const formId = this.props.params.id;
+        if (formId === "new-form") {
+            //for new form
+            method = "POST";
+            path = "/api/forms"
+        } else {
+            //for udate existing form
+            method = "PUT";
+            path = `/api/forms/${formId}`;
+        }
+        const { title, description, isOpen } = this.state;
+        //clean __key field if it exists
+        const questions = this.state.questions.map((q) => {
+            if (q.__key) {
+                return { ...q, __key: undefined };
+            } else {
+                return q;
+            }
+        });
+        const body = {
+            title,
+            description,
+            isOpen,
+            questions
+        }
+        const headers = {
+            "Authorization": `Bearer ${this.props.token}`,
+            "Content-Type": "Application/json"
+        }
+        const option = {
+            method,
+            headers,
+            body: JSON.stringify(body)
+        }
+        fetch(path, option)
+            .then((response) => {
+                const status = response.status;
+                if (status === 200) {
+                    if (formId === "new-form") {
+                        let locationHeader = response.headers.get("Location");
+                        const id = locationHeader.split("/").pop();
+                        this.props.router.replace("/forms/" + id + "/edit");
+                    } else {
+                        console.log("====================SAVED==========================");
+                    }
+                } else if (status === 500)
+                    alert("internal server Error");
+                else if (status === 404)
+                    alert("Form not found!");
+                else if (status === 403)
+                    alert("Permission denied");
+                else if (status === 401) {
+                    alert("Wrong token");
+                    this.ptops.onLogOutHandler();
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
 
     }
     onCopyQuestion(indOfQuestion) {
@@ -210,23 +334,33 @@ export default class Editor extends Component {
 
 
     render() {
-        const { questions, title, description, _id } = this.state;
+        const { questions, title, description, isLoading } = this.state;
+        const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
             return <QuestionEdit key={_id || __key} type={type} possblAns={possblAns} questionText={questionText}
+                numOfQuestions={numOfQuestions}
                 onChangeAnswer={(indOfAnswer) => (e) => this.onChangeAnswer(e, indOfQuestion, indOfAnswer)}
                 onChangeQuestionText={(e) => this.onChangeQuestionText(e, indOfQuestion)}
                 onAddAnswer={() => this.onAddAnswer(indOfQuestion)}
                 onDeleteAnswer={(indOfAnswer) => (e) => this.onDeleteAnswer(indOfQuestion, indOfAnswer)}
                 onChangeType={(e) => this.onChangeType(e, indOfQuestion)}
                 onDeleteQuestion={() => this.onDeleteQuestion(indOfQuestion)}
-                onCopyQuestion={() => this.onCopyQuestion(indOfQuestion)} 
+                onCopyQuestion={() => this.onCopyQuestion(indOfQuestion)}
                 onBlurQuestionText={(e) => this.onBlurQuestionText(e, indOfQuestion)}
                 onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)} />
-
-
         })
+        const formId = this.props.params.id;
+        let link;
+        //if form is new, _id contains null value
+        if (formId !== "new-form") {
+            link = "http://localhost:3000/forms/" + formId;
+        } else {
+            link = "Save the form, when it has been saved you can pass it";
+        }
+        const loadingDiv = isLoading ? <div className="Spinner">Loading</div> : null;
         console.log("===================== RENDER =========================");
+
         return (
             <div className="Editor">
                 <div className="Editor-link">
@@ -234,13 +368,14 @@ export default class Editor extends Component {
                         Link:
                     </div>
                     <div>
-                        {"http://localhost:3000/forms/" + _id}
+                        {link}
                     </div>
                 </div>
                 <h1>{title}</h1>
                 <div>{description}</div>
                 <button onClick={this.onResults}>Results</button>{" "}<button onClick={this.onSaveHandler}>Save</button>
                 {questionList}
+                {loadingDiv}
                 <button onClick={this.onAddQuestion}>Add</button>
             </div>
         )

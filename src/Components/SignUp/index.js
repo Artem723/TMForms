@@ -13,6 +13,10 @@ export default class SignUp extends Component {
         this.onSignUpHandler = this.onSignUpHandler.bind(this);
 
     }
+    componentDidMount() {
+        if(this.props.token)
+            this.props.router.replace("/");
+    }
     onChangeHandler(e) {
         const value = e.target.value;
         const name = e.target.name;
@@ -20,7 +24,8 @@ export default class SignUp extends Component {
             [name]: value
         })
     }
-    onSignUpHandler() {
+    onSignUpHandler(e) {
+        e.preventDefault();
         const { login, password, repeatPassword } = this.state;
         if (password !== repeatPassword) {
             alert("You do not repeat your password correctly");
@@ -48,31 +53,39 @@ export default class SignUp extends Component {
             body: JSON.stringify(body),
             cache: "no-store"
         }
+        let status;
         fetch("/api/registration", option)
-        .then((response)=>{
-            if(response.status !== 200)
-                alert("something goes wrong. Status " + response.status);
-            else 
-                response.json();
-        })
-        .then((body) => {
-            console.log(body);
-        })
-        .catch((err)=>{
-
-        })
+            .then((response) => {
+                status = response.status;
+                return response.json();                 
+            })
+            .then((body) => {
+                if (status !== 200) {
+                    const message = body && body.message;
+                    alert("Something goes wrong. Status " + status + ". Message: " + message);
+                } else {
+                    let token = body && body.token;
+                    this.props.onLogInHandler(token);
+                    this.props.router.replace("/");
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
 
     }
     render() {
         return (
             <div className="SignUp-container">
-                <div>Login</div>
-                <input type="text" name="login" onChange={this.onChangeHandler} />
-                <div>Password</div>
-                <input type="password" name="password" onChange={this.onChangeHandler} />
-                <div>Repeat Password</div>
-                <input type="password" name="repeatPassword" onChange={this.onChangeHandler} />
-                <button className="SignUp-signup-btn" onClick={this.onSignUpHandler}>Sign up</button>
+                <form onSubmit={this.onSignUpHandler}>
+                    <div>Login</div>
+                    <input type="text" name="login" onChange={this.onChangeHandler} />
+                    <div>Password</div>
+                    <input type="password" name="password" onChange={this.onChangeHandler} />
+                    <div>Repeat Password</div>
+                    <input type="password" name="repeatPassword" onChange={this.onChangeHandler} />
+                    <input type="submit" className="SignUp-signup-btn" value="Sign Up"/>
+                </form>
             </div>
         )
     }

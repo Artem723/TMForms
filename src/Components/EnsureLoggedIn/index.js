@@ -3,9 +3,12 @@ import React, { Component } from "react"
 export default class EnsureLoggedIn extends Component {
 
     componentDidMount() {
-        if (!this.props.token) {
-            this.props.router.replace("/LogIn");
-        }
+        if (!this.props.token) 
+            this.props.router.replace("/LogIn");        
+    }
+    componentDidUpdate() {
+        if (!this.props.token) 
+            this.props.router.replace("/LogIn");       
     }
 
     render() {
