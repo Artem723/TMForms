@@ -2,28 +2,27 @@ import React, { Component } from "react"
 import ChartWrapper from "./ChartWrapper"
 
 export default class ResultBlock extends Component {
-    componentDidMount() {
-        //TODO initialize chart
-        const {  usersAns, possblAns, type, id } = this.props;
-        if (type === "string") {
-            return;
-        } else {
-            const chartType = (type === "check") ? "bar" : "pie";
-            const data = possblAns.map((el) => {
-                return usersAns[el] || 0;
-            });
-            const ctx = document.getElementById("myChart" + id);
-            ChartWrapper(ctx, chartType, possblAns, data);
-        }
+    renderChart() {
+        const { answers, type, id } = this.props;
+        const chartType = (type === "check") ? "bar" : "pie";
+        const labels = Object.keys(answers);
+        const data = labels.map((el) => answers[el]);
+        const ctx = document.getElementById("myChart" + id);
+        ChartWrapper(ctx, chartType, labels, data);
+    }
+    componentDidMount() {        
+        if(this.props.type !== "string")
+            this.renderChart();
+        
     }
     render() {
-        const { questionText, numOfAns, usersAns, type, id } = this.props;
+        const { questionText, numOfAns, answers, type, id } = this.props;
         let answer;
         let list;
         if (type !== "string") {
             answer = <canvas id={"myChart" + id} width="500" height="500"></canvas>;
         } else {
-            list = usersAns.map((el, ind) => {
+            list = answers.map((el, ind) => {
                 return <li key={ind}>{el}</li>
             })
             answer = (
@@ -31,7 +30,7 @@ export default class ResultBlock extends Component {
                     {list}
                 </ul>
             )
-            
+
         }
         return (
             <div className="ResultBlock">
@@ -47,10 +46,9 @@ export default class ResultBlock extends Component {
 ResultBlock.propTypes = {
     questionText: React.PropTypes.string.isRequired,
     numOfAns: React.PropTypes.number,
-    usersAns: React.PropTypes.oneOfType([
+    answers: React.PropTypes.oneOfType([
         React.PropTypes.arrayOf(React.PropTypes.string),
-        React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number))
+        React.PropTypes.objectOf(React.PropTypes.number)
     ]).isRequired,
-    possblAns: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     type: React.PropTypes.oneOf(["radio", "string", "check"]).isRequired
 } 
