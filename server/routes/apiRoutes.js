@@ -152,12 +152,12 @@ apiRoutes.route("/forms/:id")
             res.status(403).json({ message: "Form is closed." }).end();
             return;
         }
-        const questionList =  form.questions.map(function (el) {
+        const questionList = form.questions.map(function (el) {
             return {
                 questionText: el.questionText,
                 type: el.type,
                 _id: el.id,
-                possblAns: el.possblAns
+                possblAns: Object.keys(el.possblAns)
             }
         });
         const resForm = {
@@ -173,7 +173,7 @@ apiRoutes.route("/forms/:id")
     function (req, res) {
         req.form.questions.forEach(function (el) {
             el.usersAns = null;
-            el.checkRadioAns = null;
+            el.possblAns = Object.keys(el.possblAns);
         });
         res.json(req.form).end();
     });

@@ -164,14 +164,10 @@ userRoutes.get("/results/forms/:id", checkPermission, findForm, function (req, r
     let form = req.form;
     let resArr = form.questions.map(function (q) {
         let answers;
-        if (q.type === "string")
-            answers = q.usersAns;
-        else
-            answers = q.checkRadioAns;
         return {
             type: q.type,
             possblAns: q.possblAns,
-            usersAns: answers,
+            usersAns: q.usersAns,
             id: q.id,
             questionText: q.questionText
         }

@@ -26,7 +26,6 @@ userSchema.methods.setPassword = function (password) {
 * @param  {String} password {User's password}
 */
 userSchema.methods.isPasswordValid = function(password) {
-    //TODO verufy hashes
     return bcrypt.compareSync(password, this.hashedPassword);
 }
 
