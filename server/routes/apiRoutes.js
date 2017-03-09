@@ -130,9 +130,9 @@ apiRoutes.route("/forms/:id")
             //console.log("Question: " + question);
             if (question === null) return;
             question.addUserAnswer(el.answers);
-                
+
         });
-        
+
         form.save(function (err) {
             if (err) {
                 res.status(500).json({ message: "Internal server Error." }).end();
@@ -145,24 +145,29 @@ apiRoutes.route("/forms/:id")
     .get(function (req, res, next) {
         //send form data with questions without field "usersAns"
         let form = req.form;
-        if (!form.isOpen) {
+        if (req.get("Authorization")) {
             next();
             return;
         }
-        form.questions.forEach(function (el) {
-            el.usersAns = null;
-            el.checkRadioAns = null;
-        });
-        res.json(form).end();
-
-
-    }, function (req, res, next) {
-        let authHeader = req.get("Authorization");
-        if (!authHeader) {
+        if (!form.isOpen) {
             res.status(403).json({ message: "Form is closed." }).end();
             return;
         }
-        next();
+        const questionList =  form.questions.map(function (el) {
+            return {
+                questionText: el.questionText,
+                type: el.type,
+                _id: el.id,
+                possblAns: el.possblAns
+            }
+        });
+        const resForm = {
+            title: form.Title,
+            description: form.description,
+            isOpen: form.isOpen,
+            questions: questionList
+        }
+        res.json(resForm).end();
     },
     verifyToken,
     findUser,

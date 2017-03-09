@@ -57,7 +57,7 @@ export default class Editor extends Component {
         this.onChangeType = this.onChangeType.bind(this);
         this.onDeleteQuestion = this.onDeleteQuestion.bind(this);
         this.onAddQuestion = this.onAddQuestion.bind(this);
-        this.onResults = this.onResults.bind(this);
+        this.onResults = this.onResultsHandler.bind(this);
         this.onBlurAnswer = this.onBlurAnswer.bind(this);
         this.onBlurQuestionText = this.onBlurQuestionText.bind(this);
     }
@@ -328,7 +328,7 @@ export default class Editor extends Component {
             };
         })
     }
-    onResults() {
+    onResultsHandler() {
         this.props.router.replace("/forms/" + this.props.params.id + "/results");
     }
 
@@ -373,7 +373,7 @@ export default class Editor extends Component {
                 </div>
                 <h1>{title}</h1>
                 <div>{description}</div>
-                <button onClick={this.onResults}>Results</button>{" "}<button onClick={this.onSaveHandler}>Save</button>
+                <button onClick={this.onResultsHandler}>Results</button>{" "}<button onClick={this.onSaveHandler}>Save</button>
                 {questionList}
                 {loadingDiv}
                 <button onClick={this.onAddQuestion}>Add</button>
