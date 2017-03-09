@@ -119,6 +119,7 @@ apiRoutes.route("/forms/:id")
          *  }
          * ]
          */
+        
         let form = req.form;
         if (!form.isOpen) res.status(403).json({ message: "Form is closed." }).end()
         if (!Array.isArray(req.body)) {
@@ -132,15 +133,13 @@ apiRoutes.route("/forms/:id")
             question.addUserAnswer(el.answers);
 
         });
-
         form.save(function (err) {
             if (err) {
                 res.status(500).json({ message: "Internal server Error." }).end();
                 throw err;
             }
-            res.end("");
+            res.json({ message: "Success"} ).end();
         })
-
     })
     .get(function (req, res, next) {
         //send form data with questions without field "usersAns"
@@ -162,9 +161,8 @@ apiRoutes.route("/forms/:id")
             }
         });
         const resForm = {
-            title: form.Title,
+            title: form.title,
             description: form.description,
-            isOpen: form.isOpen,
             questions: questionList
         }
         res.json(resForm).end();

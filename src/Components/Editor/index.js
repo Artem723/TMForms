@@ -57,7 +57,7 @@ export default class Editor extends Component {
         this.onChangeType = this.onChangeType.bind(this);
         this.onDeleteQuestion = this.onDeleteQuestion.bind(this);
         this.onAddQuestion = this.onAddQuestion.bind(this);
-        this.onResults = this.onResultsHandler.bind(this);
+        this.onResultsHandler = this.onResultsHandler.bind(this);
         this.onBlurAnswer = this.onBlurAnswer.bind(this);
         this.onBlurQuestionText = this.onBlurQuestionText.bind(this);
     }
