@@ -15,7 +15,7 @@ const Question = mongoose.model('question', QuestionSchema);
 * @param  {Array} questions {array of questions that need to be added to document}
 * 
 */
-formSchema.methods.addQuestions = function (questions) {
+formSchema.methods.addQuestions = function (questions, answers) {
     let self = this;
     questions.forEach(function (q) {
         //questions souldn't contain id field
@@ -36,7 +36,6 @@ formSchema.methods.addQuestions = function (questions) {
                 self.questions[lastInd].possblAns[el] = 0;
                 self.markModified("questions[" + lastInd + "].possblAns." + el)
             })*/
-            
             const  questionDocument = new Question({questionText: q.questionText, type: q.type});
             questionDocument.possblAns = {};
             q.possblAns.forEach((el)=>{
@@ -50,7 +49,7 @@ formSchema.methods.addQuestions = function (questions) {
 
         }
         else if (q.type === "string") {
-            if (q.possblAns.length > 0) q.possblAns = {};
+            q.possblAns = {};
             self.questions.push(q);
         }
         else return;

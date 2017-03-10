@@ -61,7 +61,9 @@ export default class Results extends Component {
                 this.setState({
                     hasResponseObtained: false
                 });
-                if(status === 401) this.props.routes.replace("/login");
+                if(status === 401){
+                    this.props.onLogOutHandler();
+                } 
                 else if(status === 404) alert("not found");
                 else if(status === 403) alert("permission denied");
                 else return response.json();
@@ -71,7 +73,6 @@ export default class Results extends Component {
                     const message = body && body.message;
                     alert("Something goes wrong. Status " + status + ". Message: " + message);
                 } else {
-                    let forms = body;
                     this.setState({
                         data: body
                     });
