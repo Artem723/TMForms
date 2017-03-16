@@ -1,0 +1,5 @@
+html {
+    /*For correct footer rendering */
+    position: relative;
+    min-height: 100%;
+}

@@ -1,5 +1,30 @@
-.header {
-    padding-top: 20px;
-    padding-bottom: 20px;
+ul.navigation-bar {
+    overflow: hidden;
+    background-color: #383838;
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+    border-radius: 0px 0px 10px 10px;
+}
+
+ul.navigation-bar li {
+    float: left;
+}
+
+ul.navigation-bar li.right {
+    float: right;
+}
+ul.navigation-bar a, ul.navigation-bar span{
+    display: block;
+    padding: 8px 10px;
     text-align: center;
+    color: white;
+    text-decoration: none;
+}
+ul.navigation-bar li:first-child {
+    font-weight: bold;
+}
+
+ul.navigation-bar a:hover {
+    background-color: black;   
 }

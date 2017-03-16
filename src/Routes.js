@@ -15,7 +15,7 @@ import SignUp from "./Components/SignUp"
 import NoMatch from "./Components/NoMatch"
 import EnsureLoggedIn from "./Components/EnsureLoggedIn"
 
-let routes = (
+const routes = (
     <Router history={browserHistory} >
         <Route path="/" component={App} >
             <Route component={EnsureLoggedIn}>

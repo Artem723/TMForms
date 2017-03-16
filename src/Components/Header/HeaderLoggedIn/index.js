@@ -1,4 +1,5 @@
-import React, {Component} from "react"
+import React, { Component } from "react"
+import { Link } from "react-router"
 import "../header.css"
 
 export default class HeaderLoggedIn extends Component {
@@ -6,14 +7,14 @@ export default class HeaderLoggedIn extends Component {
         const payload = this.props.token.split(".")[1];
         const onLogOutHandler = this.props.onLogOutHandler;
         const onGoToHomeHandler = this.props.onGoToHomeHandler;
-        const login = JSON.parse( atob(payload) ).login;
+        const login = JSON.parse(atob(payload)).login;
         return (
-            <div className="header">
-                <span><button onClick={onGoToHomeHandler}>Home</button></span>
-                {' '}hello, {login}!{' '}
-                <span><button onClick={onLogOutHandler}>Exit</button></span>
-                <hr />
-            </div>
+            <ul className="navigation-bar">
+                <li><Link to="/">React Forms</Link></li>
+                <li><Link to="/">Home</Link></li>               
+                <li className="right"><a href="#" onClick={onLogOutHandler}>Exit</a></li>
+                <li className="right"><span className="user-login">user: {login}</span></li>
+            </ul>
         )
     }
 }

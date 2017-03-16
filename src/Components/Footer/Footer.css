@@ -1,6 +1,14 @@
-.Footer {
-    text-align: center;
-    clear: both;
-    border: 1px solid black;
+footer.page-footer{
+    display: block;
+    position: absolute;
+    bottom: -40px;
+       
     width: 100%;
+}
+footer.page-footer > div {
+        text-align: center;
+    background-color: #383838;
+    color: white;
+    padding: 8px;
+    border-radius: 10px 10px 0px 0px;
 }
