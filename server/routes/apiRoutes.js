@@ -40,7 +40,7 @@ apiRoutes.post("/authentication", function (req, res) {
             return;
         }
         if (user.isPasswordValid(body.password)) {
-            jwt.sign({ login: body.login }, secretWord, { expiresIn: "7d" }, function (err, token) {
+            jwt.sign({ login: body.login, ip: req.ip }, secretWord, { expiresIn: "7d" }, function (err, token) {
                 if (err) {
                     res.status(500).json({ message: "Internal server error" }).end();
                     throw err;
@@ -75,7 +75,7 @@ apiRoutes.post("/registration", function (req, res) {
         res.status(400).json({ message: "Password too small. Password must be at least 5 symbols." }).end();
         return;
     }
-    User.findOne({ login: body.login }, function (err, user) {
+    User.findOne({ login: body.login, ip: req.ip }, function (err, user) {
         if (err) {
             res.status(500).json({ message: "Internal server error" }).end();
             throw err;

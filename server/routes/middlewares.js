@@ -52,6 +52,10 @@ function verifyToken(req, res, next) {
             res.status(401).json({ message: 'Authorization failed. Wrong token.' }).end();
             return;
         }
+        if(decoded.ip !== req.ip) {
+            res.status(401).end();
+            return;
+        }
         req.userLogin = decoded.login;
         next();
     });
