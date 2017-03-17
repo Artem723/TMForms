@@ -28,3 +28,18 @@ ul.navigation-bar li:first-child {
 ul.navigation-bar a:hover {
     background-color: black;   
 }
+nav > div.container {
+    padding: 0px;
+}
+
+.App > nav {
+    position: fixed;
+    width: 100%;
+    top: 0px;
+}
+@media only screen and (max-width: 500px){
+    /*hide user login and home links in small devices*/
+    ul.navigation-bar li:nth-child(2), ul.navigation-bar li:last-child  {
+        display: none;
+    }
+}

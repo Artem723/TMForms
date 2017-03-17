@@ -36,7 +36,9 @@ export default class Header extends Component {
         else header = token ? <HeaderLoggedIn  {...loggedInProps} /> : <HeaderUnloggedIn {...unLoggedInprops} />;
         return (
             <nav>
-                {header && React.cloneElement(header, this.props)}
+                <div className="container">
+                    {header && React.cloneElement(header, this.props)}
+                </div>
             </nav>
         );
     }

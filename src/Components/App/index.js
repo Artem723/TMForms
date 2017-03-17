@@ -35,14 +35,17 @@ class App extends Component {
     };
     return (
       <div className="App">
+
+        <Header {...this.props} token={this.state.token} onLogOutHandler={this.onLogOutHandler} />
         
-        <div className="container">
-          <Header {...this.props} token={this.state.token} onLogOutHandler={this.onLogOutHandler} />
-          {React.cloneElement(this.props.children, props)}
-        </div>
-        
-        {<Footer />}       
-      
+        <main>
+          <div className="container">
+            {React.cloneElement(this.props.children, props)}
+          </div>
+        </main>
+
+        {<Footer />}
+
       </div>
     );
   }
