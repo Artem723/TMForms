@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import Footer from "../Footer"
 import Header from "../Header"
+import { Grid } from "react-bootstrap"
 
 
 class App extends Component {
@@ -39,9 +40,9 @@ class App extends Component {
         <Header {...this.props} token={this.state.token} onLogOutHandler={this.onLogOutHandler} />
         
         <main>
-          <div className="container">
+          <Grid>
             {React.cloneElement(this.props.children, props)}
-          </div>
+          </Grid>
         </main>
 
         {<Footer />}

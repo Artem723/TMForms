@@ -1,3 +1,7 @@
 .SearchBar {
     text-align: center;
 }
+
+.SearchBar input[type=text] {
+    width: 100%;
+}

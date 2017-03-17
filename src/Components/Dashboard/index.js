@@ -2,24 +2,25 @@ import React, { Component } from "react"
 import SearchBar from "../SearchBar"
 import FormTile from "../FormTile"
 import "./Dashboard.css"
-const forms = [
-  {
-    "_id": "58a6e345702e7410f4a33ed6",
-    "title": "Hello"
-  },
-  {
-    "_id": "58a6e349702e7410f4a33eda",
-    "title": "Hello2"
-  },
-  {
-    "_id": "58a6e34c702e7410f4a33ede",
-    "title": "Hello3"
-  },
-  {
-    "_id": "58a6e353702e7410f4a33ee2",
-    "title": "The best title"
-  }
-]
+import { Row, Col } from "react-bootstrap"
+// const forms = [
+//   {
+//     "_id": "58a6e345702e7410f4a33ed6",
+//     "title": "Hello"
+//   },
+//   {
+//     "_id": "58a6e349702e7410f4a33eda",
+//     "title": "Hello2"
+//   },
+//   {
+//     "_id": "58a6e34c702e7410f4a33ede",
+//     "title": "Hello3"
+//   },
+//   {
+//     "_id": "58a6e353702e7410f4a33ee2",
+//     "title": "The best title"
+//   }
+// ]
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -98,15 +99,15 @@ export default class Dashboard extends Component {
         .then((response) => {
           status = response.status;
           if (status === 200) {
-            this.setState((prevState)=>{
-              const newForm = prevState.forms.filter((el)=>{
+            this.setState((prevState) => {
+              const newForm = prevState.forms.filter((el) => {
                 return el._id !== formId;
               })
               return {
                 forms: newForm
-              };              
+              };
             });
-          }            
+          }
           else if (status === 500)
             alert("internal server Error");
           else if (status === 404)
@@ -117,7 +118,7 @@ export default class Dashboard extends Component {
             alert("Wrong token");
             this.props.onLogOutHandler();
           }
-            
+
         })
         .catch((err) => {
           console.log(err);
@@ -132,12 +133,21 @@ export default class Dashboard extends Component {
     const formList = forms.filter((el) => {
       return re.test(el.title);
     });
-
-    const tiles = formList.map((el) => {
-      return <FormTile key={el._id} title={el.title}
-        onGoToFormHAndler={() => this.onGoToFormHandler(el._id)}
-        onDeleteHandler={(e) => this.onDeleteHandler(e, el._id)} />
+    const tiles = formList.map((el, ind) => {
+      return (
+        <Col key={el._id} lg={2} md={3} sm={4} >
+          <FormTile title={el.title}
+            onGoToFormHAndler={() => this.onGoToFormHandler(el._id)}
+            onDeleteHandler={(e) => this.onDeleteHandler(e, el._id)} />
+        </Col>
+      )
     })
+
+    const tilesRow = (
+      <Row>
+        {tiles}
+      </Row>
+    )
     let spinner = null, message = null;
     if (hasResponseObtained) {
       message = forms.length ? null : <div>Your dashboard is empty. Click on "NEW" button to create new form</div>
@@ -149,7 +159,7 @@ export default class Dashboard extends Component {
         <SearchBar searchText={this.state.searchText} onChange={this.onChangeSearchText} onNewFormHandler={this.onNewFormHandler} />
         {spinner}
         {message}
-        {tiles}
+        {tilesRow}
       </div>
     )
   }
