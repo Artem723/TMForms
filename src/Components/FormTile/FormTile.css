@@ -1,7 +1,12 @@
-.FormTile {
+a.FormTile {
     height: 200px;
     border: 1px solid black;
     margin: 10px 0px;
     padding: 10px;
     cursor:pointer;
+    display: block;
+    
+    /*text*/
+    text-decoration: none;
+    color: black;
 }

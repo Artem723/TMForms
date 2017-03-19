@@ -1,17 +1,38 @@
 import React, { Component } from "react"
-//import { Link } from "react-router"
+import { Link } from "react-router"
+import DeleteModal from "./DeleteModal"
 import "./FormTile.css"
 
 export default class FormTile extends Component {
+    constructor(props){
+        super(props);
+        this.state= {
+            showModal: false
+        }
+        this.onShowModal = this.onShowModal.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
+    }
+    onShowModal(e) {
+        e.preventDefault();
+        this.setState({
+            showModal: true
+        })
+    }
+
+    onCloseModal() {
+        this.setState({
+            showModal: false
+        })
+    }
     render() {
-        let {title, onDeleteHandler, onGoToFormHAndler} = this.props;
+        const {title, onDeleteHandler, formID} = this.props;
+        const showModal = this.state.showModal;
         return (
-            <div onClick={onGoToFormHAndler}>
-                <div className="FormTile">
+                <Link to={`/forms/${formID}/edit`} className="FormTile">
+                    <DeleteModal show={showModal} onClose={this.onCloseModal} onDelete={onDeleteHandler}/>
                     <div>{title}</div>
-                    <button onClick={onDeleteHandler}>delete</button>
-                </div>
-            </div>
+                    <button onClick={this.onShowModal}>delete</button>
+                </Link>
         )
     }
 }
@@ -19,5 +40,5 @@ export default class FormTile extends Component {
 FormTile.propTypes = {
     title: React.PropTypes.string.isRequired,
     onDeleteHandler: React.PropTypes.func.isRequired,
-    onGoToFormHAndler: React.PropTypes.func.isRequired
+    formID: React.PropTypes.string.isRequired
 }

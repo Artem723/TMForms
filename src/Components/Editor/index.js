@@ -334,6 +334,7 @@ export default class Editor extends Component {
 
 
     render() {
+        console.log("===================== RENDER =========================");
         const { questions, title, description, isLoading } = this.state;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
@@ -359,7 +360,6 @@ export default class Editor extends Component {
             link = "Save the form, when it has been saved you can pass it";
         }
         const loadingDiv = isLoading ? <div className="Spinner">Loading</div> : null;
-        console.log("===================== RENDER =========================");
 
         return (
             <div className="Editor">
