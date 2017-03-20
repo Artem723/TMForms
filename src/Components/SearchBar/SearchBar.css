@@ -1,7 +1,29 @@
 .SearchBar {
     text-align: center;
+    margin: 10px 0px;
 }
 
 .SearchBar input[type=text] {
     width: 100%;
+}
+
+div.search-input {
+    position: relative;
+}
+
+div.search-input > span{
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+    left: 0px;
+}
+
+div.search-input > input[type=text] {
+    padding-left: 30px;
+    margin-bottom: 5px;
+}
+
+.SearchBar .title {
+    font-size: 25px;
+    font-weight: bold; 
 }

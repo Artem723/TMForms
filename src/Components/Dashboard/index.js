@@ -133,7 +133,7 @@ export default class Dashboard extends Component {
   render() {
 
     const { searchText, forms, hasResponseObtained, showErrorAlert } = this.state;
-    const re = new RegExp(searchText)
+    const re = new RegExp(searchText, "i")
     const formList = forms.filter((el) => {
       return re.test(el.title);
     });
@@ -154,7 +154,7 @@ export default class Dashboard extends Component {
     )
     let spinner = null, message = null;
     if (hasResponseObtained) {
-      message = forms.length ? null : <div>Your dashboard is empty. Click on "NEW" button to create new form</div>
+      message = forms.length ? null : <div className="info-message">Your dashboard is empty. Click on "NEW" button to create new form</div>
     } else {
       spinner = hasResponseObtained ? null : <div className="Spinner"></div>;
     }
