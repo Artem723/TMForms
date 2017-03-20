@@ -165,9 +165,7 @@ export default class FormViewer extends Component {
         let body;
         if (!hasResponseObtained) {
             body = (
-                <div className="Spinner">
-                    Loading...
-                </div>
+                <div className="Spinner"></div>
             )
         } else if (IsClosed) {
             body = (
@@ -189,7 +187,7 @@ export default class FormViewer extends Component {
                     onChange={(e) => this.onChangeHandler(ind, e)} />
             });
             body = (
-                <div className="FormViewer-container">
+                <div className="FormViewer-container animated">
                     <h1>{title}</h1>
                     <div>{description}</div>
                     <hr />

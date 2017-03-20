@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router"
+import { Glyphicon } from "react-bootstrap"
 import DeleteModal from "./DeleteModal"
 import "./FormTile.css"
 
@@ -30,8 +31,10 @@ export default class FormTile extends Component {
         return (
                 <Link to={`/forms/${formID}/edit`} className="FormTile">
                     <DeleteModal show={showModal} onClose={this.onCloseModal} onDelete={onDeleteHandler}/>
-                    <div>{title}</div>
-                    <button onClick={this.onShowModal}>delete</button>
+                    <header>{title}</header>
+                    <footer>
+                        <button onClick={this.onShowModal}>Delete</button>
+                    </footer>
                 </Link>
         )
     }

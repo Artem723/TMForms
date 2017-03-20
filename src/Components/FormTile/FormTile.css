@@ -1,12 +1,48 @@
 a.FormTile {
-    height: 200px;
-    border: 1px solid black;
-    margin: 10px 0px;
-    padding: 10px;
-    cursor:pointer;
+    position: relative;
     display: block;
-    
+    height: 200px;
+    border: 1px solid #5C5C5C;
+    border-top: 5px solid #5C5C5C;
+    margin: 10px 0px;
+    cursor:pointer;
+    padding-bottom: 30px;
     /*text*/
     text-decoration: none;
     color: black;
+    transition: border 0.2s linear;
+}
+a:hover.FormTile {
+    border-color: #3498db;
+}
+a.FormTile > header {
+    
+    padding: 10px;
+    height: 100%;
+    overflow: hidden;
+    
+}
+
+a.FormTile > footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    height: 30px;
+    left: 0px;
+}
+a.FormTile > footer > button {
+    border: none;
+    border-top: 1px solid #AFAFAF;
+    background: inherit;  
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition: color 0.5s, background 0.5s, font 0.5s;
+    
+}
+a.FormTile > footer > button:hover {
+    font-weight: bold;
+    background: #D8534F;
+    background: #AF4442;
+    color: white;
 }

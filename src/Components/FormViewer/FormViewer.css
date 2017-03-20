@@ -1,11 +1,5 @@
 .FormViewer-container {
-    width: 600px;
-    margin: 20px auto;
+
     border: 1px solid black;
 }
 
-.Spinner {
-    text-align: center;
-    font-size: 20px;
-    color: red 
-}
