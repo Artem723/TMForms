@@ -31,8 +31,14 @@ div.animated {
 }
 
 
-
 @keyframes animatebottom { 
   from{ bottom:-150px; opacity:0 } 
   to{ bottom:0; opacity:1 }
+}
+
+.bordered {
+   padding: 10px;
+    border: 1px solid #DBE0E4;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }

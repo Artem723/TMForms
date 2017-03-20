@@ -1,4 +1,4 @@
-.LogIn-container input {
+/*.LogIn-container input {
     width: 100%;
     display: block;
     margin: 20px 0px;
@@ -15,3 +15,11 @@
     display: block;
 
 }
+*/
+
+.LogIn-container header {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-family:  "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-align: center;
+} 
