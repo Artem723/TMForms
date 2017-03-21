@@ -9,6 +9,7 @@ import {
 } from "react-bootstrap"
 import { Link } from "react-router"
 import FieldGroup from "../FieldGroup"
+import ErrorAlert from "../ErrorAlert"
 import "./LogIn.css"
 
 export default class LogIn extends Component {
@@ -28,6 +29,10 @@ export default class LogIn extends Component {
         this.getValidationState = this.getValidationState.bind(this);
     }
     componentDidMount() {
+        if (this.props.token)
+            this.props.router.replace("/");
+    }
+    componentDidUpdate() {
         if (this.props.token)
             this.props.router.replace("/");
     }
@@ -80,7 +85,7 @@ export default class LogIn extends Component {
                 status = response.status;
                 if(status >= 500) 
                     this.setState({
-                        errorAlertText: "Oh, we've got network issue. We try to do everything so that it does not happen again"
+                        errorAlertText: "Oh, we've got server issue. We try to do everything so that it does not happen again"
                     });
                 return response.json();
             })
@@ -98,7 +103,6 @@ export default class LogIn extends Component {
                 } else {
                     const token = body && body.token;
                     this.props.onLogInHandler(token);
-                    this.props.router.replace("/");
                 }
             })
             .catch((err) => {
@@ -118,15 +122,13 @@ export default class LogIn extends Component {
              return isPasswordIncorrect ? "error" : null;
         }
         return null;
-    }
+    }   
     render() {
         const { errorAlertText } = this.state;
         let errorAlert = null;
         if (errorAlertText) {
             errorAlert = (
-                <Alert bsStyle="danger" onDismiss={this.onHideAlert}>
-                    {errorAlertText}
-                </Alert>
+                <ErrorAlert main={errorAlertText} onDismiss={this.onHideAlert}/>
             )
         }
         const loginFieldProps = {
@@ -144,7 +146,8 @@ export default class LogIn extends Component {
         return (
             <section className="LogIn-container">
                 <Col sm={8} smOffset={2} lg={4} lgOffset={4}>
-                    <header>React Forms</header>
+                    <header className="logo-text">React Forms</header>
+                    <p className="title">Authentification</p>
                     <form onSubmit={this.onSignInHandler} className="bordered">
                         <FieldGroup {...loginFieldProps}/>
                         <FieldGroup {...passwordFieldProps}/>

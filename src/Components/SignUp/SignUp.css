@@ -16,3 +16,10 @@
 
 }
 */
+.SignUp-container .title {
+    text-align: center;
+    font-weight: bold;
+}
+.SignUp-container section:last-child {
+    text-align: center;
+}

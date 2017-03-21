@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import SearchBar from "../SearchBar"
 import FormTile from "../FormTile"
 import "./Dashboard.css"
-import { Row, Col } from "react-bootstrap"
+import { Row, Col, Button } from "react-bootstrap"
 import ErrorAlert from "../ErrorAlert"
 // const forms = [
 //   {
@@ -38,6 +38,7 @@ export default class Dashboard extends Component {
     this.onHideErrorAlert = this.onHideErrorAlert.bind(this);
   }
   componentDidMount() {
+    console.log("in Dashboard " + this.props.token)
     const headers = {
       "Authorization": `Bearer ${this.props.token}`
     }
@@ -158,7 +159,18 @@ export default class Dashboard extends Component {
     } else {
       spinner = hasResponseObtained ? null : <div className="Spinner"></div>;
     }
-    const errAlert = showErrorAlert ? <ErrorAlert onHide={this.onHideErrorAlert} /> : null;
+    //const errAlert = showErrorAlert ? <ErrorAlert onHide={this.onHideErrorAlert} /> : null;
+    let errAlert = null;
+    if (showErrorAlert) {
+      const alertProps = {
+        header: "Oh, something went wrong!",
+        main: "We've got server issue. We try to do everything so that it does not happen again",
+        footer: <Button onClick={this.onHideErrorAlertonHide}>OK</Button>,
+        onDismiss: this.onHideErrorAlertonHide
+      }
+
+      errAlert = <ErrorAlert {...alertProps} />
+    }
     return (
       <div className="Dashboard">
         <SearchBar searchText={this.state.searchText} onChange={this.onChangeSearchText} onNewFormHandler={this.onNewFormHandler} />

@@ -42,3 +42,11 @@ div.animated {
     border-radius: 5px;
     margin-bottom: 10px;
 }
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    font-family:  "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-align: center;
+} 

@@ -2,13 +2,16 @@ import React from "react"
 import {Alert, Button} from "react-bootstrap"
 
 export default function ErrorAlert(props) {
-    const { onHide } = props;
+    const { header, main, footer, ...rest } = props;
     return (
-        <Alert bsStyle="danger" onDismiss={onHide}>
-            <h4>Oh, something went wrong!</h4>
-            <p>We've got network issue. We try to do everything so that it does not happen again</p>
-
-            <p><Button onClick={onHide}>OK</Button></p>
+        <Alert bsStyle="danger"  {...rest}>
+            {header && <h4>{header}</h4>}
+            <p>{main}</p>
+            {footer && <p>{footer}</p>}
         </Alert>
     )
+}
+
+ErrorAlert.propTypes = {
+    main: React.PropTypes.string.isRequired,
 } 
