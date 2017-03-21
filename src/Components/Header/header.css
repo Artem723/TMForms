@@ -14,7 +14,7 @@ ul.navigation-bar li {
 ul.navigation-bar li.right {
     float: right;
 }
-ul.navigation-bar a, ul.navigation-bar span{
+ul.navigation-bar a, ul.navigation-bar .user-login{
     display: block;
     padding: 8px 10px;
     text-align: center;
