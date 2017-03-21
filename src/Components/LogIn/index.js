@@ -8,6 +8,7 @@ import {
     Button
 } from "react-bootstrap"
 import { Link } from "react-router"
+import FieldGroup from "../FieldGroup"
 import "./LogIn.css"
 
 export default class LogIn extends Component {
@@ -95,7 +96,7 @@ export default class LogIn extends Component {
                         isPasswordIncorrect: true
                     });    
                 } else {
-                    let token = body && body.token;
+                    const token = body && body.token;
                     this.props.onLogInHandler(token);
                     this.props.router.replace("/");
                 }
@@ -127,25 +128,31 @@ export default class LogIn extends Component {
                     {errorAlertText}
                 </Alert>
             )
+        }
+        const loginFieldProps = {
+            validationState:this.getValidationState("login"),
+            label: "login",
+            type: "text",
+            onChange: this.onChangeLogin
         } 
+        const passwordFieldProps = {
+            validationState: this.getValidationState("password"),
+            label: "Password",
+            type: "password",
+            onChange: this.onChangePassword
+        }
         return (
             <section className="LogIn-container">
                 <Col sm={8} smOffset={2} lg={4} lgOffset={4}>
                     <header>React Forms</header>
                     <form onSubmit={this.onSignInHandler} className="bordered">
-                        <FormGroup validationState={this.getValidationState("login")}>
-                            <ControlLabel>Login</ControlLabel>
-                            <FormControl type="text" onChange={this.onChangeLogin} />
-                        </FormGroup>
-                        <FormGroup validationState={this.getValidationState("password")}>
-                            <ControlLabel>Password</ControlLabel>
-                            <FormControl type="password" onChange={this.onChangePassword} />
-                        </FormGroup>
+                        <FieldGroup {...loginFieldProps}/>
+                        <FieldGroup {...passwordFieldProps}/>
                         <Button type="submit" bsStyle="success" block>Sign in</Button>
                     </form>
                     {errorAlert}
                     <section className="bordered">
-                        New to React Forms? <Link to="/SignUp">Create an account</Link>
+                        New to React Forms? <Link to="/SignUp">Create an account.</Link>
                     </section>
                 </Col>
             </section>
