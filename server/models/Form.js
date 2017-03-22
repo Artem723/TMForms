@@ -29,6 +29,7 @@ formSchema.methods.addQuestions = function (questions, answers) {
         //questions souldn't contain id field
         if (q._id) q._id = undefined;
         if (typeof q.questionText !== "string" || typeof q.type !== "string" || !Array.isArray(q.possblAns)) return;
+        if(q.questionText === "") return;
         if (q.questionText.length > MAX_LENGTH_OF_QUESTION_TEXT) q.questionText = q.questionText.slice(0, MAX_LENGTH_OF_QUESTION_TEXT);
         if (q.type === "check" || q.type === "radio") {
             if (q.possblAns.length === 0) return;
@@ -48,7 +49,8 @@ formSchema.methods.addQuestions = function (questions, answers) {
             questionDocument.possblAns = {};
             q.possblAns.forEach((el, ind)=>{
                 //skip if number of answers greate than constant
-                if(ind > MAX_NUMBER_OF_ANSWERS-1) return;
+                
+                if(ind > MAX_NUMBER_OF_ANSWERS-1 || typeof el !== "string" || !el) return;
                 if(el.length > MAX_LENGTH_OF_ANSWER_TEXT) el = el.slice(0, MAX_LENGTH_OF_ANSWER_TEXT);
                 questionDocument.possblAns[el] = 0;               
                 questionDocument.markModified("possblAns." + el);

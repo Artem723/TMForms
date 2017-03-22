@@ -117,6 +117,10 @@ userRoutes.route("/forms/:id")
             res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
             return;
         }
+        //if title or description is empty then reject request
+        if(!body.title || !body.description) {
+            res.status(400).json({ message: "The data type of the submitted form is not valid" });
+        }
         form.title = body.title;
         form.description = body.description;
         form.isOpen = body.isOpen;
