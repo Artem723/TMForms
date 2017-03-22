@@ -1,14 +1,17 @@
 import React, { Component } from "react"
+import FieldGroup from "../../FieldGroup";
 import "../Question.css"
 
 export default class QuestionString extends Component {
     render() {
-        const {questionText, answers, onChange} = this.props;
+        const {questionText: label, answers: value, onChange} = this.props;
+        const formProps = {
+            label,
+            value,
+            onChange
+        }
         return (
-            <div className="Question">
-                <div>{questionText}</div>
-                <input type="text" value={answers} onChange={onChange}/>
-            </div>
+            <FieldGroup {...formProps}/>
         )
     }
 }

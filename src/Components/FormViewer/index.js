@@ -1,48 +1,48 @@
 import React, { Component } from "react"
 import Question from "../Question"
+import { Col, Button, ListGroup, ListGroupItem } from "react-bootstrap"
+import ErrorAlert from "../ErrorAlert"
 import "./FormViewer.css"
-const form = {
-    "_id": "58a6e353702e7410f4a33ee2",
-    "title": "The best title",
-    "description": "The best description",
-    "isOpen": true,
-    "questions": [
-        {
-            "questionText": "How are youTest?",
-            "type": "string",
-            "_id": "58a6e8ff9070be11bc9466b1",
-            "possblAns": [],
-            "answers": ""
-        },
-        {
-            "questionText": "Where are you from?",
-            "type": "radio",
-            "_id": "58a6e8ff9070be11bc9466b2",
-            "possblAns": [
-                "Brest",
-                "Minsk",
-                "Grodno",
-                "Amsterdam"
-            ],
-            "answers": ""
-        },
-        {
-            "questionText": "Where are you from?",
-            "type": "check",
-            "_id": "58a6e8ff9070be11bc9466b3",
-            "possblAns": [
-                "Brest",
-                "Minsk",
-                "Grodno",
-                "Amsterdam"
-            ],
-            "answers": []
-        }
-    ],
-    "isSended": false
-
-
-};
+// const form = {
+//     "_id": "58a6e353702e7410f4a33ee2",
+//     "title": "The best title",
+//     "description": "The best description",
+//     "isOpen": true,
+//     "questions": [
+//         {
+//             "questionText": "How are youTest?",
+//             "type": "string",
+//             "_id": "58a6e8ff9070be11bc9466b1",
+//             "possblAns": [],
+//             "answers": ""
+//         },
+//         {
+//             "questionText": "Where are you from?",
+//             "type": "radio",
+//             "_id": "58a6e8ff9070be11bc9466b2",
+//             "possblAns": [
+//                 "Brest",
+//                 "Minsk",
+//                 "Grodno",
+//                 "Amsterdam"
+//             ],
+//             "answers": ""
+//         },
+//         {
+//             "questionText": "Where are you from?",
+//             "type": "check",
+//             "_id": "58a6e8ff9070be11bc9466b3",
+//             "possblAns": [
+//                 "Brest",
+//                 "Minsk",
+//                 "Grodno",
+//                 "Amsterdam"
+//             ],
+//             "answers": []
+//         }
+//     ],
+//     "isSended": false
+// };
 export default class FormViewer extends Component {
     constructor(props) {
         super(props);
@@ -52,11 +52,12 @@ export default class FormViewer extends Component {
             questions: [],
             isSended: false,
             IsClosed: false,
-            hasResponseObtained: false
-
+            hasResponseObtained: false,
+            showErrorAlert: false
         };
         this.onChangeHandler = this.onChangeHandler.bind(this);
         this.onSendHandler = this.onSendHandler.bind(this);
+        this.onHideErrorAlertonHide = this.onHideErrorAlertonHide.bind(this);
     }
     onChangeHandler(indOfQestion, e) {
         const questions = this.state.questions.slice();
@@ -91,33 +92,34 @@ export default class FormViewer extends Component {
         fetch(`/api/forms/${formId}`)
             .then((response) => {
                 status = response.status;
-                console.log(status);
                 if (status === 403) {
                     this.setState({
                         IsClosed: true
                     })
                 } else if (status === 404) {
-                    alert("form not found");
-                } else return response.json();
+                    this.props.router.replace("/not-found");
+                } else if (status >= 500) {
+                    this.setState({
+                        showErrorAlert: true,
+                        hasResponseObtained: true
+                    })
+                } else if (status === 200)
+                    return response.json();
             })
             .then((body) => {
-                if (status === 200) {
-                    const { title, description, questions } = body;
-                    const questionList = questions.map((el) => {
-                        return { ...el, answers: [] }
-                    });
-                    this.setState({
-                        title,
-                        description,
-                        questions: questionList,
-                        hasResponseObtained: true
-                    });
-                } else {
-                    alert(body.message);
-                }
+                const { title, description, questions } = body;
+                const questionList = questions.map((el) => {
+                    return { ...el, answers: [] }
+                });
+                this.setState({
+                    title,
+                    description,
+                    questions: questionList,
+                    hasResponseObtained: true
+                });
             })
             .catch((err) => {
-                console.log(err);
+                throw err;
             });
     }
     onSendHandler() {
@@ -145,58 +147,85 @@ export default class FormViewer extends Component {
                         IsClosed: true
                     })
                 } else if (status === 404) {
-                    alert("form not found");
+                    this.props.router.replace("/not-found");
+                } else if (status >= 500) {
+                    this.setState({
+                        showErrorAlert: true
+                    });
                 } else if (status === 200) {
                     this.setState({
                         isSended: true
                     });
-                } else return response.json();
-            })
-            .then((body) => {
-                alert(body.message);
+                }
             })
             .catch((err) => {
-                console.log(err);
+                throw err;
             })
+    }
+
+    onHideErrorAlertonHide() {
+        this.setState({
+            showErrorAlert: false
+        })
     }
     render() {
 
         const { title, description, questions, isSended, IsClosed, hasResponseObtained } = this.state;
         let body;
+        const alertProps = {
+            header: "Oh, something went wrong!",
+            main: "We've got server issue. We try to do everything so that it does not happen again",
+            onDismiss: this.onHideErrorAlertonHide
+        }
+        const errAlert = <ErrorAlert className="absolute" {...alertProps}/>;
         if (!hasResponseObtained) {
             body = (
                 <div className="Spinner"></div>
             )
         } else if (IsClosed) {
             body = (
-                <div>
+                <section className="info-message">
                     Sorry, form is closed.
-                </div>
+                </section>
             )
         } else if (isSended) {
             body = (
-                <div>
+                <section className="info-message">
                     The form is sended.<br />
                     Thank you.
-                </div>
+                </section>
             )
         } else {
             const questionList = questions.map((el, ind) => {
-                return <Question questionText={el.questionText}
-                    type={el.type} possblAns={el.possblAns} key={el._id} answers={el.answers}
-                    onChange={(e) => this.onChangeHandler(ind, e)} />
+                return (
+                    <ListGroupItem key={el._id}>
+                        <Question questionText={el.questionText}
+                            type={el.type} possblAns={el.possblAns} answers={el.answers}
+                            onChange={(e) => this.onChangeHandler(ind, e)} />
+                    </ListGroupItem>
+                )
             });
             body = (
-                <div className="FormViewer-container animated">
-                    <h1>{title}</h1>
-                    <div>{description}</div>
-                    <hr />
-                    <div>{questionList}</div>
-                    <button onClick={this.onSendHandler}>Send</button>
-                </div>
+                <section className="FormViewer">
+                    <Col sm={10} smOffset={1} md={8} mdOffset={2} lg={6} lgOffset={3} className="animated">
+                        <header>
+                            {this.state.showErrorAlert && errAlert}
+                            <h1>{title}</h1>
+                            <div className="lead">{description}</div>
+                        </header>
+                        <main>
+                            <ListGroup>
+                                {questionList}
+                            </ListGroup>
+                        </main>
+                        <footer>
+                            {/*If we haven't got questions then we hide button*/}
+                            {!!questionList.length && <Button block bsStyle="primary" onClick={this.onSendHandler}>Send</Button>}
+                        </footer>
+                    </Col>
+                </section>
             )
         }
-        //console.log(body);
         return body;
     }
 }

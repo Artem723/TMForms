@@ -50,3 +50,10 @@ div.animated {
     font-family:  "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     text-align: center;
 } 
+
+.info-message {
+    text-align: center;
+    max-width: 768px;
+    margin: 200px auto;
+    font-size: 30px;
+}

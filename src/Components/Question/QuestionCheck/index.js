@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { Checkbox, FormGroup, ControlLabel } from "react-bootstrap"
 import "../Question.css"
 
 export default class QuestionCheck extends Component {
@@ -6,17 +7,16 @@ export default class QuestionCheck extends Component {
         const {possblAns, questionText, answers, onChange} = this.props;
         const answersList = possblAns.map((el, ind) => {
             return (
-                <label key={ind}>
-                    <input type="checkbox" name={el} checked={answers.indexOf(el)!==-1} onChange={onChange}/>
+                <Checkbox key={ind} name={el} checked={answers.indexOf(el)!==-1} onChange={onChange}>
                     {el}
-                </label>
+                </Checkbox>
             )
         });
         return (
-            <div className="Question">
-                <div>{questionText}</div>
-                <div>{answersList}</div>
-            </div>
+            <FormGroup>
+                 <ControlLabel>{questionText}</ControlLabel>
+                 {answersList}
+            </FormGroup>
         )
     }
 }
