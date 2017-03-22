@@ -2,6 +2,12 @@
 const mongoose = require('mongoose');
 const QuestionSchema = require('../Schemas/QuestionSchema.js');
 const Schema = mongoose.Schema;
+const {
+    MAX_NUMBER_OF_ANSWERS, 
+    MAX_NUMBER_OF_QUESTIONS,
+    MAX_LENGTH_OF_QUESTION_TEXT,
+    MAX_LENGTH_OF_ANSWER_TEXT
+} = require("./constants")
 
 const formSchema = new Schema({
     title: String,
@@ -17,11 +23,13 @@ const Question = mongoose.model('question', QuestionSchema);
 */
 formSchema.methods.addQuestions = function (questions, answers) {
     let self = this;
-    questions.forEach(function (q) {
+    questions.forEach(function (q, ind) {
+        //skip if number of questions greate than constant
+        if(ind > MAX_NUMBER_OF_QUESTIONS-1) return;
         //questions souldn't contain id field
         if (q._id) q._id = undefined;
         if (typeof q.questionText !== "string" || typeof q.type !== "string" || !Array.isArray(q.possblAns)) return;
-        if (q.questionText.length > 200) q.questionText = q.questionText.slice(0, 200);
+        if (q.questionText.length > MAX_LENGTH_OF_QUESTION_TEXT) q.questionText = q.questionText.slice(0, MAX_LENGTH_OF_QUESTION_TEXT);
         if (q.type === "check" || q.type === "radio") {
             if (q.possblAns.length === 0) return;
             //TODO check possblAns on unique and empty values(use Set)
@@ -38,8 +46,10 @@ formSchema.methods.addQuestions = function (questions, answers) {
             })*/
             const  questionDocument = new Question({questionText: q.questionText, type: q.type});
             questionDocument.possblAns = {};
-            q.possblAns.forEach((el)=>{
-                if(el.length > 100) el = el.slice(0,100);
+            q.possblAns.forEach((el, ind)=>{
+                //skip if number of answers greate than constant
+                if(ind > MAX_NUMBER_OF_ANSWERS-1) return;
+                if(el.length > MAX_LENGTH_OF_ANSWER_TEXT) el = el.slice(0, MAX_LENGTH_OF_ANSWER_TEXT);
                 questionDocument.possblAns[el] = 0;               
                 questionDocument.markModified("possblAns." + el);
             })

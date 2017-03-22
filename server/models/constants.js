@@ -1,0 +1,6 @@
+"use strict";
+exports.MAX_NUMBER_OF_QUESTIONS = 50;
+exports.MAX_NUMBER_OF_ANSWERS = 15;
+exports.MAX_LENGTH_OF_ANSWER_TEXT = 100;
+exports.MAX_LENGTH_OF_QUESTION_TEXT = 200;
+
