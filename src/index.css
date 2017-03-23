@@ -24,7 +24,7 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-div.animated {
+div.animated, section.animated {
   position: relative;
   animation-name: animatebottom;
   animation-duration: 1s;

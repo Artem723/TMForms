@@ -94,7 +94,8 @@ export default class FormViewer extends Component {
                 status = response.status;
                 if (status === 403) {
                     this.setState({
-                        IsClosed: true
+                        IsClosed: true,
+                        hasResponseObtained: true
                     })
                 } else if (status === 404) {
                     this.props.router.replace("/not-found");
@@ -105,8 +106,10 @@ export default class FormViewer extends Component {
                     })
                 } else if (status === 200)
                     return response.json();
+                
             })
             .then((body) => {
+                if(!body) return;
                 const { title, description, questions } = body;
                 const questionList = questions.map((el) => {
                     return { ...el, answers: [] }
@@ -177,7 +180,7 @@ export default class FormViewer extends Component {
             main: "We've got server issue. We try to do everything so that it does not happen again",
             onDismiss: this.onHideErrorAlertonHide
         }
-        const errAlert = <ErrorAlert className="absolute" {...alertProps}/>;
+        const errAlert = <ErrorAlert className="absolute" {...alertProps} />;
         if (!hasResponseObtained) {
             body = (
                 <div className="Spinner"></div>

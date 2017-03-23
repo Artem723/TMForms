@@ -16,3 +16,30 @@ export default function FieldGroup(props) {
         </FormGroup>
     )
 }
+
+FieldGroup.Static = function FieldGroupStatic(props)  {
+    const {validationState, label, help, value,...rest} = props;
+    return(
+        <FormGroup validationState={validationState}>
+            <ControlLabel>{label}</ControlLabel>
+            <FormControl.Static {...rest}>
+                {value}
+            </FormControl.Static>
+            {help && <HelpBlock>{help}</HelpBlock>}
+        </FormGroup>
+    )
+}
+
+FieldGroup.propTypes = {
+    validationState: React.PropTypes.oneOf(['success', 'warning', 'error', null]),
+    label: React.PropTypes.string,
+    help: React.PropTypes.string,
+    value: React.PropTypes.string
+}
+
+FieldGroup.Static.propTypes = {
+    validationState: React.PropTypes.oneOf(['success', 'warning', 'error', null]),
+    label: React.PropTypes.string,
+    help: React.PropTypes.string,
+    value: React.PropTypes.string
+}

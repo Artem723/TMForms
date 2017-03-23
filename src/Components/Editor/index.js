@@ -1,5 +1,9 @@
 import React, { Component } from "react"
 import QuestionEdit from "../QuestionEdit"
+import { Col, Row, Button } from "react-bootstrap"
+import { Link } from "react-router"
+import FieldGroup from "../FieldGroup"
+import Switcher from "../Switcher"
 import "./Editor.css"
 // const form = {
 //     "_id": "58a6e353702e7410f4a33ee2",
@@ -41,12 +45,13 @@ export default class Editor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            "title": "",
-            "description": "",
-            "isOpen": false,
-            "questions": [],
+            title: "",
+            description: "",
+            isOpen: true,
+            questions: [],
             isLoading: false
         }
+        this.onIsOpenChange = this.onIsOpenChange.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onSaveHandler = this.onSaveHandler.bind(this);
@@ -120,11 +125,15 @@ export default class Editor extends Component {
                     });
                 })
                 .catch((err) => {
-                    console.log(err);
+                    throw err;
                 })
         }
     }
-
+    onIsOpenChange(e) {
+        this.setState({
+            isOpen: e.target.checked
+        })
+    }
     onChangeTitle(e) {
 
     }
@@ -308,7 +317,7 @@ export default class Editor extends Component {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                throw err;
             })
 
     }
@@ -335,7 +344,7 @@ export default class Editor extends Component {
 
     render() {
         console.log("===================== RENDER =========================");
-        const { questions, title, description, isLoading } = this.state;
+        const { questions, title, description, isLoading, isOpen } = this.state;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
@@ -352,32 +361,50 @@ export default class Editor extends Component {
                 onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)} />
         })
         const formId = this.props.params.id;
-        let link;
+        let linkComp;
         //if form is new, _id contains null value
         if (formId !== "new-form") {
-            link = "http://localhost:3000/forms/" + formId;
-        } else {
-            link = "Save the form, when it has been saved you can pass it";
-        }
-        const loadingDiv = isLoading ? <div className="Spinner">Loading</div> : null;
-
-        return (
-            <div className="Editor">
+            const link = "http://localhost:3000/forms/" + formId;
+            linkComp = (
                 <div className="Editor-link">
-                    <div>
-                        Link:
-                    </div>
-                    <div>
-                        {link}
-                    </div>
+                    <div>Link:</div>
+                    <Link to={link}>{link}</Link>
                 </div>
-                <h1>{title}</h1>
-                <div>{description}</div>
-                <button onClick={this.onResultsHandler}>Results</button>{" "}<button onClick={this.onSaveHandler}>Save</button>
-                {questionList}
-                {loadingDiv}
-                <button onClick={this.onAddQuestion}>Add</button>
-            </div>
+            );
+        } else {
+            linkComp = <div className="msg-text">Save the form, when it has been saved you can pass it</div>;
+        }
+        const textSwitcher = isOpen ? "Answers are accepted" : "Answers aren't accepted";
+        const spinner = <div className="Spinner" />;
+        const body = (
+            <section className="Editor animated">
+                <Row>
+                    <Col md={2} lgOffset={1}>
+                        <section className="fixed">
+                            <Button block bsStyle="primary" onClick={this.onResultsHandler}>Results</Button>
+                            <Button block bsStyle="primary" onClick={this.onSaveHandler}>Save</Button>
+                        </section>
+                    </Col>
+                    <Col sm={10} smOffset={1} md={8} mdOffset={0} lg={6} >
+                        <header >
+                            <Switcher text={textSwitcher} checked={isOpen} onChange={this.onIsOpenChange} />
+                            {/*<FieldGroup.Static className="Editor-link" label="Link:" value={link}/>*/}
+                            {linkComp}
+                        </header>
+                        <main>
+                            <h1>{title}</h1>
+                            <div>{description}</div>
+                            {questionList}
+                        </main>
+                        <footer>
+                            <button onClick={this.onAddQuestion}>Add</button>
+                        </footer>
+                    </Col>
+                </Row>
+            </section>
+        )
+        return (
+            isLoading ? spinner : body
         )
     }
 }
