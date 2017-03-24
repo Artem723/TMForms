@@ -39,3 +39,10 @@
 .Editor .msg-text {
     font-size: 24px;
 }
+.Editor textarea {
+    max-width: 100%;
+    min-width: 100%;
+}
+.Editor .title-textarea {    
+    font-size: 28px;
+}

@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import QuestionEdit from "../QuestionEdit"
-import { Col, Row, Button } from "react-bootstrap"
+import { Col, Row, Button, ListGroup, ListGroupItem } from "react-bootstrap"
 import { Link } from "react-router"
 import FieldGroup from "../FieldGroup"
 import Switcher from "../Switcher"
@@ -52,8 +52,8 @@ export default class Editor extends Component {
             isLoading: false
         }
         this.onIsOpenChange = this.onIsOpenChange.bind(this);
-        this.onChangeDescription = this.onChangeDescription.bind(this);
-        this.onChangeTitle = this.onChangeTitle.bind(this);
+        this.onChangeByName = this.onChangeByName.bind(this);
+        this.onBlurInputByName = this.onBlurInputByName.bind(this);
         this.onSaveHandler = this.onSaveHandler.bind(this);
         this.onChangeAnswer = this.onChangeAnswer.bind(this);
         this.onChangeQuestionText = this.onChangeQuestionText.bind(this);
@@ -134,10 +134,28 @@ export default class Editor extends Component {
             isOpen: e.target.checked
         })
     }
-    onChangeTitle(e) {
-
+    onChangeByName(e) {
+        const target = e.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            [name]: value
+        })
     }
-    onChangeDescription(e) {
+    onBlurInputByName(e) {
+        const target = e.target;
+        const name = target.name;
+        const value = target.value;
+        if (!value) {
+            let newVal = "";
+            switch (name) {
+                case "title": newVal = "Form title"; break;
+                case "description": newVal = "Description"; break;
+            }
+            this.setState({
+                [name]: newVal
+            })
+        }
 
     }
     onBlurAnswer(e, indOfQuestion, indOfAnswer) {
@@ -169,8 +187,6 @@ export default class Editor extends Component {
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
             const possblAns = questions[indOfQuestion].possblAns;
-            //if value string is empty, assign sample
-            //value = value || `answer ${indOfAnswer + 1}`;
             possblAns[indOfAnswer] = value;
             return {
                 questions
@@ -181,8 +197,6 @@ export default class Editor extends Component {
         let value = e.target.value;
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            //if value string is empty, assign sample
-            //value = value || "Question";
             questions[indOfQuestion].questionText = value;
             return {
                 questions
@@ -348,17 +362,21 @@ export default class Editor extends Component {
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
-            return <QuestionEdit key={_id || __key} type={type} possblAns={possblAns} questionText={questionText}
-                numOfQuestions={numOfQuestions}
-                onChangeAnswer={(indOfAnswer) => (e) => this.onChangeAnswer(e, indOfQuestion, indOfAnswer)}
-                onChangeQuestionText={(e) => this.onChangeQuestionText(e, indOfQuestion)}
-                onAddAnswer={() => this.onAddAnswer(indOfQuestion)}
-                onDeleteAnswer={(indOfAnswer) => (e) => this.onDeleteAnswer(indOfQuestion, indOfAnswer)}
-                onChangeType={(e) => this.onChangeType(e, indOfQuestion)}
-                onDeleteQuestion={() => this.onDeleteQuestion(indOfQuestion)}
-                onCopyQuestion={() => this.onCopyQuestion(indOfQuestion)}
-                onBlurQuestionText={(e) => this.onBlurQuestionText(e, indOfQuestion)}
-                onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)} />
+            return (
+                <ListGroupItem key={_id || __key}>
+                    <QuestionEdit type={type} possblAns={possblAns} questionText={questionText}
+                        numOfQuestions={numOfQuestions}
+                        onChangeAnswer={(indOfAnswer) => (e) => this.onChangeAnswer(e, indOfQuestion, indOfAnswer)}
+                        onChangeQuestionText={(e) => this.onChangeQuestionText(e, indOfQuestion)}
+                        onAddAnswer={() => this.onAddAnswer(indOfQuestion)}
+                        onDeleteAnswer={(indOfAnswer) => (e) => this.onDeleteAnswer(indOfQuestion, indOfAnswer)}
+                        onChangeType={(e) => this.onChangeType(e, indOfQuestion)}
+                        onDeleteQuestion={() => this.onDeleteQuestion(indOfQuestion)}
+                        onCopyQuestion={() => this.onCopyQuestion(indOfQuestion)}
+                        onBlurQuestionText={(e) => this.onBlurQuestionText(e, indOfQuestion)}
+                        onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)} />
+                </ListGroupItem>
+            )
         })
         const formId = this.props.params.id;
         let linkComp;
@@ -374,16 +392,35 @@ export default class Editor extends Component {
         } else {
             linkComp = <div className="msg-text">Save the form, when it has been saved you can pass it</div>;
         }
+        const titleProps = {
+            label: "",
+            rows: 1,
+            className: "title-textarea",
+            name: "title",
+            type: "text",
+            value: title,
+            onChange: this.onChangeByName,
+            onBlur: this.onBlurInputByName
+        }
+        const descriptionProps = {
+            label: "",
+            rows: 1,
+            componentClass: "textarea",
+            name: "description",
+            value: description,
+            onChange: this.onChangeByName,
+            onBlur: this.onBlurInputByName
+        }
         const textSwitcher = isOpen ? "Answers are accepted" : "Answers aren't accepted";
         const spinner = <div className="Spinner" />;
         const body = (
             <section className="Editor animated">
                 <Row>
                     <Col md={2} lgOffset={1}>
-                        <section className="fixed">
+                        <aside className="fixed">
                             <Button block bsStyle="primary" onClick={this.onResultsHandler}>Results</Button>
                             <Button block bsStyle="primary" onClick={this.onSaveHandler}>Save</Button>
-                        </section>
+                        </aside>
                     </Col>
                     <Col sm={10} smOffset={1} md={8} mdOffset={0} lg={6} >
                         <header >
@@ -392,12 +429,16 @@ export default class Editor extends Component {
                             {linkComp}
                         </header>
                         <main>
-                            <h1>{title}</h1>
-                            <div>{description}</div>
-                            {questionList}
+                            <form>
+                                <FieldGroup {...titleProps} />
+                                <FieldGroup {...descriptionProps} />
+                                <ListGroup>
+                                    {questionList}
+                                </ListGroup>
+                            </form>
                         </main>
                         <footer>
-                            <button onClick={this.onAddQuestion}>Add</button>
+                            <Button block bsStyle="primary" onClick={this.onAddQuestion}>Add</Button>
                         </footer>
                     </Col>
                 </Row>

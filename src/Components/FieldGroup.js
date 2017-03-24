@@ -10,7 +10,7 @@ export default function FieldGroup(props) {
     const {validationState, label, help, ...rest} = props;
     return(
         <FormGroup validationState={validationState}>
-            <ControlLabel>{label}</ControlLabel>
+             {label && <ControlLabel>{label}</ControlLabel>}
             <FormControl {...rest}/>
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>
@@ -21,7 +21,7 @@ FieldGroup.Static = function FieldGroupStatic(props)  {
     const {validationState, label, help, value,...rest} = props;
     return(
         <FormGroup validationState={validationState}>
-            <ControlLabel>{label}</ControlLabel>
+            {label && <ControlLabel>{label}</ControlLabel>}
             <FormControl.Static {...rest}>
                 {value}
             </FormControl.Static>

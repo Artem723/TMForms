@@ -1,8 +1,18 @@
 import React, { Component } from "react"
+import FieldGroup from "../FieldGroup"
+import SelectGroup from "../SelectGroup"
+import {
+    Button,
+    FormGroup,
+    InputGroup,
+    FormControl,
+    ControlLabel,
+    ButtonGroup,
+    Glyphicon
+} from "react-bootstrap"
 import "./QuestionEdit.css"
 
 export default class QuestionEdit extends Component {
-
     render() {
         const {
             questionText,
@@ -22,43 +32,57 @@ export default class QuestionEdit extends Component {
         let answers;
         let addAnswerButton;
         if (type === "string") {
-            answers = (
-                <label className="questionEdit-answer">
-                    <input type="text" value="user answer" /*DELETE LATER*/ /*onChange={()=>{}}*/ readOnly /*DELETE LATER*/ /> {/*onChange callback added  to remove the warning*/}
-                </label>
-            )
+            answers = null;
             addAnswerButton = null;
         } else {
             const length = possblAns.length;
             answers = possblAns.map((el, ind, arr) => {
                 const inputType = (type === "check") ? "checkbox" : "radio";
-                const delButton = length > 1 ? <button onClick={onDeleteAnswer(ind)}>x</button> : null;
+                //const delButton = length > 1 ? <button onClick={onDeleteAnswer(ind)}>x</button> : null;
+                let delButton = null;
+                if (length > 1)
+                    delButton = (
+                        <InputGroup.Button>
+                            <Button onClick={onDeleteAnswer(ind)}><i className="fa fa-remove"></i></Button>
+                        </InputGroup.Button>
+                    )
                 return (
-                    <label className="questionEdit-answer" key={ind}>
-                        <input type={inputType} checked={false} />
-                        <input type="text" value={el} onChange={onChangeAnswer(ind)} onBlur={onBlurAnswer(ind)} />
-                        {delButton}
-                    </label>
+                    //answers
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Addon>
+                                <input type={inputType} checked={false} readOnly />
+                            </InputGroup.Addon>
+                            <FormControl type="text" value={el} onChange={onChangeAnswer(ind)} onBlur={onBlurAnswer(ind)} />
+                            {delButton}
+                        </InputGroup>
+                    </FormGroup>
                 )
             });
-            addAnswerButton = (length < 15) ? <button onClick={onAddAnswer}>Add</button> : null;
+            addAnswerButton = (length < 15) ? <Button bsStyle="primary" onClick={onAddAnswer}><Glyphicon glyph="plus" /></Button> : null;
         }
-        const delQuestionButton = numOfQuestions >1 ? <button onClick={onDeleteQuestion}>delete</button> : null;
+        const delQuestionButton = numOfQuestions > 1 ? <Button bsStyle="primary" onClick={onDeleteQuestion}>delete <Glyphicon glyph="trash" /></Button> : null;
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">
-                    <input type="text" value={questionText} onChange={onChangeQuestionText} onBlur={onBlurQuestionText} />
+                    <FieldGroup label="" componentClass="textarea" value={questionText} onChange={onChangeQuestionText} onBlur={onBlurQuestionText} />
                     {answers}
                     {addAnswerButton}
                 </div>
                 <div className="questionEdit-settings">
-                    <select value={type} onChange={onChangeType}>
-                        <option value="string">plain text</option>
-                        <option value="check">checkbox</option>
-                        <option value="radio">radio button</option>
-                    </select>
-                    <button onClick={onCopyQuestion}>copy</button>{" "}
-                    {delQuestionButton}
+                    {/*<FormGroup controlId="formControlsSelect">
+                        <ControlLabel>type:</ControlLabel>
+                        <FormControl value={type} componentClass="select" placeholder="select" onChange={onChangeType}>
+                            <option value="string">plain text</option>
+                            <option value="check">checkbox</option>
+                            <option value="radio">radio button</option>
+                        </FormControl>
+                    </FormGroup>*/}
+                    <SelectGroup value={type} label="type:" onChange={onChangeType} optionsValues={["string","check","radio"]} optionsText={["plain text","checkbox","radio button"]}/>
+                    <ButtonGroup >
+                        <Button bsStyle="primary" onClick={onCopyQuestion}>copy <i className="fa fa-copy fa-lg"></i></Button>
+                        {delQuestionButton}
+                    </ButtonGroup>
                 </div>
             </div>
         )
