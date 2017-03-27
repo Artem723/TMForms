@@ -158,8 +158,7 @@ userRoutes.route("/forms/:id")
  * Route sends results to client as JSON object in the following format:
  *  {
  *      type: String, one of {"check", "radio" or "string"}, 
- *      possblAns: Array, if type is "string" it'll be empty array, otherwise array of possible answers,
- *      usersAns: Array or Object, depends on type: if type is "string", usersAns will be Array, otherwise - Object, that will contain pair {answer: count}  
+ *      answers: Array or Object, depends on type: if type is "string", usersAns will be Array, otherwise - Object, that will contain pair {answer: count}  
  *      id: String, id of question,
  *      questionText: String
  *  }

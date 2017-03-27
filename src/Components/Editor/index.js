@@ -51,7 +51,8 @@ export default class Editor extends Component {
             isOpen: true,
             questions: [],
             isLoading: false,
-            isSaved: false
+            isSaved: false,
+            showErrorAlert: false
         }
         this.onIsOpenChange = this.onIsOpenChange.bind(this);
         this.onChangeByName = this.onChangeByName.bind(this);

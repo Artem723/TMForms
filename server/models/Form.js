@@ -35,15 +35,6 @@ formSchema.methods.addQuestions = function (questions, answers) {
             if (q.possblAns.length === 0) return;
             
             const questionDocument = new Question({ questionText: q.questionText, type: q.type });
-            ///TEST
-            console.log("sd")
-            if(ind === 0) {
-                console.log("***TEST***");
-                console.log(q.questionText, q.type)
-                console.log(questionDocument);
-                console.log("---TEST---")
-            }
-            ///TEST
             questionDocument.possblAns = {};
             q.possblAns.forEach((el, ind) => {
 

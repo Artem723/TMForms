@@ -2,32 +2,47 @@ import React, { Component } from "react"
 import ChartWrapper from "./ChartWrapper"
 
 export default class ResultBlock extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isEmpty: false
+        }
+    }
+    
     renderChart() {
+        const isZero = (el) => {
+            return el === 0;
+        }
         const { answers, type, id } = this.props;
         const chartType = (type === "check") ? "bar" : "pie";
         const labels = Object.keys(answers);
         const data = labels.map((el) => answers[el]);
-        const ctx = document.getElementById("myChart" + id);
-        ChartWrapper(ctx, chartType, labels, data);
+        if (!data.every(isZero)) {
+            const ctx = document.getElementById("myChart" + id);
+            ChartWrapper(ctx, chartType, labels, data);
+        } else this.setState({
+            isEmpty: true
+        });
     }
-    componentDidMount() {        
-        if(this.props.type !== "string")
+    componentDidMount() {
+        if (this.props.type !== "string")
             this.renderChart();
-        
+
     }
     render() {
         const { questionText, numOfAns, answers, type, id } = this.props;
+        const {isEmpty} = this.state;
         let answer;
         let list;
         if (type !== "string") {
-            answer = <canvas id={"myChart" + id} width="500" height="500"></canvas>;
+            answer = isEmpty ? <div className="info-message">Empty</div> : <canvas id={"myChart" + id} width="500" height="500"></canvas>;
         } else {
             list = answers.map((el, ind) => {
                 return <li key={ind}>{el}</li>
             })
             answer = (
-                <ul>
-                    {list}
+                <ul className="list-of-string-answers">
+                   {list.length ? list : <div className="info-message">Empty</div> }
                 </ul>
             )
 
@@ -35,8 +50,7 @@ export default class ResultBlock extends Component {
         return (
             <div className="ResultBlock">
                 <h1>
-                    {questionText}{" "}
-                    <span>Number of answers: {numOfAns}</span>
+                    {questionText}
                 </h1>
                 {answer}
             </div>
