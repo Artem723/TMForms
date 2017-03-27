@@ -182,9 +182,9 @@ export default class FormViewer extends Component {
             bsStyle: "danger",
             header: "Oh, something went wrong!",
             main: "We've got server issue. We try to do everything so that it does not happen again",
-            onDismiss: this.onHideErrorAlertonHide
+            onDismiss: this.onHideErrorAlert
         }
-        const errAlert = <AlertBlock className="absolute" {...alertProps} />;
+        const errAlert = <AlertBlock className="fixed-in-top" {...alertProps} />;
         if (!hasResponseObtained) {
             body = (
                 <div className="Spinner"></div>

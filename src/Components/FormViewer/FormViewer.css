@@ -1,9 +1,5 @@
 .FormViewer footer {
     margin: 10px 0px;
 }
-.FormViewer .absolute {
-    position: fixed;
-    z-index: 1;
-    top: 37px;
-}
+
 

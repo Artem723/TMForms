@@ -67,6 +67,7 @@ export default class Editor extends Component {
         this.onResultsHandler = this.onResultsHandler.bind(this);
         this.onBlurAnswer = this.onBlurAnswer.bind(this);
         this.onBlurQuestionText = this.onBlurQuestionText.bind(this);
+        this.onHideErrorAlert = this.onHideErrorAlert.bind(this);
     }
     componentDidMount() {
         const formId = this.props.params.id;
@@ -127,7 +128,8 @@ export default class Editor extends Component {
                         description,
                         isOpen,
                         questions,
-                        isSaved: true
+                        isSaved: true,
+                        showErrorAlert: false
                     });
                 })
                 .catch((err) => {
@@ -336,7 +338,8 @@ export default class Editor extends Component {
                         console.log("====================SAVED==========================");
                     }
                     this.setState({
-                        isSaved: true
+                        isSaved: true,
+                        showErrorAlert: false
                     })
                 } else if (status === 500)
                     this.setState({
@@ -377,10 +380,16 @@ export default class Editor extends Component {
         this.props.router.replace("/forms/" + this.props.params.id + "/results");
     }
 
+    onHideErrorAlert() {
+        this.setState({
+            showErrorAlert: false
+        });
+    }
+
 
     render() {
         console.log("===================== RENDER =========================");
-        const { questions, title, description, isLoading, isOpen, isSaved } = this.state;
+        const { questions, title, description, isLoading, isOpen, isSaved, showErrorAlert } = this.state;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
@@ -400,6 +409,16 @@ export default class Editor extends Component {
                 </ListGroupItem>
             )
         })
+        let errAlert = null;
+        if (showErrorAlert) {
+            const alertProps = {
+                bsStyle: "danger",
+                header: "Oh, something went wrong!",
+                main: "We've got server issue. We try to do everything so that it does not happen again",
+                onDismiss: this.onHideErrorAlert
+            }
+            errAlert = <AlertBlock className="fixed-in-top" {...alertProps} />
+        }
         const formId = this.props.params.id;
         let linkComp;
         //if form is new, _id contains null value
@@ -437,18 +456,18 @@ export default class Editor extends Component {
         const textSwitcher = isOpen ? "Answers are accepted" : "Answers aren't accepted";
 
         let statusAlertProps;
-        if (isSaved) 
+        if (isSaved)
             statusAlertProps = {
                 bsStyle: "success",
                 header: "Changes are saved",
                 main: ""
-        } 
-        else 
+            }
+        else
             statusAlertProps = {
                 bsStyle: "warning",
                 header: "Changes aren't saved",
                 main: ""
-        }
+            }
         const statusAlert = <AlertBlock className="statusAlert" {...statusAlertProps} />
 
         const spinner = <div className="Spinner" />;
@@ -463,6 +482,7 @@ export default class Editor extends Component {
                     </Col>
                     <Col sm={10} smOffset={1} md={8} mdOffset={0} lg={6} >
                         <header >
+                             {errAlert}
                             <Switcher text={textSwitcher} checked={isOpen} onChange={this.onIsOpenChange} />
                             {/*<FieldGroup.Static className="Editor-link" label="Link:" value={link}/>*/}
                             {linkComp}

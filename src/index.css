@@ -62,3 +62,10 @@ div.animated, section.animated {
   text-align: center;
   margin: 0px;
 }
+
+.fixed-in-top {
+    position: fixed;
+    z-index: 99;
+    top: 37px;
+    margin: auto;
+}
