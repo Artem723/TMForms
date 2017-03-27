@@ -157,7 +157,8 @@ apiRoutes.route("/forms/:id")
                 questionText: el.questionText,
                 type: el.type,
                 _id: el.id,
-                possblAns: Object.keys(el.possblAns)
+                possblAns: Object.keys(el.possblAns),
+                usersAns: undefined
             }
         });
         const resForm = {
@@ -172,7 +173,8 @@ apiRoutes.route("/forms/:id")
     checkPermission,
     function (req, res) {
         req.form.questions.forEach(function (el) {
-            el.usersAns = null;
+            console.log(el)
+            el.usersAns = undefined;
             el.possblAns = Object.keys(el.possblAns);
         });
         res.json(req.form).end();
