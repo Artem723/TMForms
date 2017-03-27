@@ -12,7 +12,15 @@ import {
 import "./QuestionEdit.css"
 
 export default class QuestionEdit extends Component {
+    shouldComponentUpdate(nextProps) {
+        const {questionText, possblAns, type} = this.props;
+        if(nextProps.questionText === questionText && nextProps.possblAns===possblAns && nextProps.type === type)
+            return false;
+        else 
+            return true;
+    }
     render() {
+        console.log("render")
         const {
             questionText,
             possblAns,
@@ -26,7 +34,8 @@ export default class QuestionEdit extends Component {
             onCopyQuestion,
             onBlurAnswer,
             onBlurQuestionText,
-            numOfQuestions
+            numOfQuestions,
+            onFocus
         } = this.props;
         let answers;
         let addAnswerButton;
@@ -52,7 +61,7 @@ export default class QuestionEdit extends Component {
                             <InputGroup.Addon>
                                 <input type={inputType} checked={false} readOnly />
                             </InputGroup.Addon>
-                            <FormControl type="text" value={el} onChange={onChangeAnswer(ind)} onBlur={onBlurAnswer(ind)} />
+                            <FormControl type="text" value={el} onChange={onChangeAnswer(ind)} onBlur={onBlurAnswer(ind)} onFocus={onFocus} />
                             {delButton}
                         </InputGroup>
                     </FormGroup>
@@ -64,7 +73,7 @@ export default class QuestionEdit extends Component {
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">
-                    <FieldGroup label="" componentClass="textarea" value={questionText} onChange={onChangeQuestionText} onBlur={onBlurQuestionText} />
+                    <FieldGroup label="" componentClass="textarea" value={questionText} onChange={onChangeQuestionText} onBlur={onBlurQuestionText} onFocus={onFocus} />
                     {answers}
                     {addAnswerButton}
                 </div>
@@ -94,5 +103,6 @@ QuestionEdit.propTypes = {
     onCopyQuestion: React.PropTypes.func.isRequired,
     onBlurQuestionText: React.PropTypes.func.isRequired,
     onBlurAnswer: React.PropTypes.func.isRequired,
+    onFocus: React.PropTypes.func.isRequired
 
 }

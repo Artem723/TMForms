@@ -197,8 +197,14 @@ export default class Editor extends Component {
         let value = e.target.value;
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            const possblAns = questions[indOfQuestion].possblAns;
-            possblAns[indOfAnswer] = value;
+            const possblAns = questions[indOfQuestion].possblAns.map((el, ind) => {
+                if (ind === indOfAnswer)
+                    return value;
+                else
+                    return el
+            });
+            questions[indOfQuestion].possblAns = possblAns;
+            
             return {
                 questions,
                 isSaved: false
@@ -219,8 +225,9 @@ export default class Editor extends Component {
     onAddAnswer(indOfQuestion) {
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            const possblAns = questions[indOfQuestion].possblAns;
+            const possblAns = questions[indOfQuestion].possblAns.map((el)=>el);
             possblAns.push(`answer ${possblAns.length + 1}`);
+            questions[indOfQuestion].possblAns = possblAns;
             return {
                 questions,
                 isSaved: false
@@ -230,8 +237,9 @@ export default class Editor extends Component {
     onDeleteAnswer(indOfQuestion, indOfAnswer) {
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            const possblAns = questions[indOfQuestion].possblAns;
+            const possblAns = questions[indOfQuestion].possblAns.map((el)=>el);
             possblAns.splice(indOfAnswer, 1);
+            questions[indOfQuestion].possblAns = possblAns;
             return {
                 questions,
                 isSaved: false
@@ -386,6 +394,9 @@ export default class Editor extends Component {
         });
     }
 
+    onFocusHandler(e) {
+        e.target.select();
+    }
 
     render() {
         console.log("===================== RENDER =========================");
@@ -405,7 +416,8 @@ export default class Editor extends Component {
                         onDeleteQuestion={() => this.onDeleteQuestion(indOfQuestion)}
                         onCopyQuestion={() => this.onCopyQuestion(indOfQuestion)}
                         onBlurQuestionText={(e) => this.onBlurQuestionText(e, indOfQuestion)}
-                        onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)} />
+                        onBlurAnswer={(indOfAnswer) => (e) => this.onBlurAnswer(e, indOfQuestion, indOfAnswer)}
+                        onFocus={this.onFocusHandler} />
                 </ListGroupItem>
             )
         })
@@ -441,7 +453,8 @@ export default class Editor extends Component {
             type: "text",
             value: title,
             onChange: this.onChangeByName,
-            onBlur: this.onBlurInputByName
+            onBlur: this.onBlurInputByName,
+            onFocus: this.onFocusHandler
         }
         const descriptionProps = {
             type: "text",
@@ -451,7 +464,8 @@ export default class Editor extends Component {
             name: "description",
             value: description,
             onChange: this.onChangeByName,
-            onBlur: this.onBlurInputByName
+            onBlur: this.onBlurInputByName,
+            onFocus: this.onFocusHandler
         }
         const textSwitcher = isOpen ? "Answers are accepted" : "Answers aren't accepted";
 
@@ -482,7 +496,7 @@ export default class Editor extends Component {
                     </Col>
                     <Col sm={10} smOffset={1} md={8} mdOffset={0} lg={6} >
                         <header >
-                             {errAlert}
+                            {errAlert}
                             <Switcher text={textSwitcher} checked={isOpen} onChange={this.onIsOpenChange} />
                             {/*<FieldGroup.Static className="Editor-link" label="Link:" value={link}/>*/}
                             {linkComp}
