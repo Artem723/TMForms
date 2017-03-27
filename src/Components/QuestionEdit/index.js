@@ -47,7 +47,7 @@ export default class QuestionEdit extends Component {
                     )
                 return (
                     //answers
-                    <FormGroup>
+                    <FormGroup key={ind}>
                         <InputGroup>
                             <InputGroup.Addon>
                                 <input type={inputType} checked={false} readOnly />

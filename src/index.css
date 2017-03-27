@@ -57,3 +57,8 @@ div.animated, section.animated {
     margin: 200px auto;
     font-size: 30px;
 }
+
+.statusAlert h4 {
+  text-align: center;
+  margin: 0px;
+}

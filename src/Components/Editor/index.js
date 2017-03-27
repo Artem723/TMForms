@@ -4,6 +4,7 @@ import { Col, Row, Button, ListGroup, ListGroupItem } from "react-bootstrap"
 import { Link } from "react-router"
 import FieldGroup from "../FieldGroup"
 import Switcher from "../Switcher"
+import AlertBlock from "../AlertBlock"
 import "./Editor.css"
 // const form = {
 //     "_id": "58a6e353702e7410f4a33ee2",
@@ -96,7 +97,7 @@ export default class Editor extends Component {
             const option = {
                 method: "GET",
                 headers
-            }            
+            }
             fetch(`/api/forms/${formId}`, option)
                 .then((response) => {
                     this.setState({
@@ -136,7 +137,8 @@ export default class Editor extends Component {
     }
     onIsOpenChange(e) {
         this.setState({
-            isOpen: e.target.checked
+            isOpen: e.target.checked,
+            isSaved: false
         })
     }
     onChangeByName(e) {
@@ -144,7 +146,8 @@ export default class Editor extends Component {
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            [name]: value
+            [name]: value,
+            isSaved: false
         })
     }
     onBlurInputByName(e) {
@@ -195,7 +198,8 @@ export default class Editor extends Component {
             const possblAns = questions[indOfQuestion].possblAns;
             possblAns[indOfAnswer] = value;
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -205,7 +209,8 @@ export default class Editor extends Component {
             const questions = prevState.questions.slice();
             questions[indOfQuestion].questionText = value;
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -215,7 +220,8 @@ export default class Editor extends Component {
             const possblAns = questions[indOfQuestion].possblAns;
             possblAns.push(`answer ${possblAns.length + 1}`);
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -225,7 +231,8 @@ export default class Editor extends Component {
             const possblAns = questions[indOfQuestion].possblAns;
             possblAns.splice(indOfAnswer, 1);
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -249,7 +256,8 @@ export default class Editor extends Component {
                 questions[indOfQuestion].type = value;
             }
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -258,7 +266,8 @@ export default class Editor extends Component {
             const questions = prevState.questions.slice();
             questions.splice(indOfQuestion, 1);
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -273,7 +282,8 @@ export default class Editor extends Component {
             }
             questions.push(newQuestion);
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -321,7 +331,7 @@ export default class Editor extends Component {
                     if (formId === "new-form") {
                         let locationHeader = response.headers.get("Location");
                         const id = locationHeader.split("/").pop();
-                        this.props.router.replace("/forms/" + id + "/edit");                        
+                        this.props.router.replace("/forms/" + id + "/edit");
                     } else {
                         console.log("====================SAVED==========================");
                     }
@@ -358,7 +368,8 @@ export default class Editor extends Component {
             }
             questions.push(newQuestion);
             return {
-                questions
+                questions,
+                isSaved: false
             };
         })
     }
@@ -369,7 +380,7 @@ export default class Editor extends Component {
 
     render() {
         console.log("===================== RENDER =========================");
-        const { questions, title, description, isLoading, isOpen } = this.state;
+        const { questions, title, description, isLoading, isOpen, isSaved } = this.state;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
@@ -414,6 +425,7 @@ export default class Editor extends Component {
             onBlur: this.onBlurInputByName
         }
         const descriptionProps = {
+            type: "text",
             label: "",
             rows: 1,
             componentClass: "textarea",
@@ -423,6 +435,22 @@ export default class Editor extends Component {
             onBlur: this.onBlurInputByName
         }
         const textSwitcher = isOpen ? "Answers are accepted" : "Answers aren't accepted";
+
+        let statusAlertProps;
+        if (isSaved) 
+            statusAlertProps = {
+                bsStyle: "success",
+                header: "Changes are saved",
+                main: ""
+        } 
+        else 
+            statusAlertProps = {
+                bsStyle: "warning",
+                header: "Changes aren't saved",
+                main: ""
+        }
+        const statusAlert = <AlertBlock className="statusAlert" {...statusAlertProps} />
+
         const spinner = <div className="Spinner" />;
         const body = (
             <section className="Editor animated">
@@ -438,6 +466,7 @@ export default class Editor extends Component {
                             <Switcher text={textSwitcher} checked={isOpen} onChange={this.onIsOpenChange} />
                             {/*<FieldGroup.Static className="Editor-link" label="Link:" value={link}/>*/}
                             {linkComp}
+                            {statusAlert}
                         </header>
                         <main>
                             <form>
