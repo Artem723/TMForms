@@ -3,7 +3,7 @@ import { Col } from "react-bootstrap"
 import FieldGroup from "../FieldGroup"
 import { Button } from "react-bootstrap"
 import { Link } from "react-router"
-import ErrorAlert from "../ErrorAlert"
+import AlertBlock from "../AlertBlock"
 import "./SignUp.css"
 
 export default class SignUp extends Component {
@@ -150,7 +150,7 @@ export default class SignUp extends Component {
         let errorAlert = null;
         if (errorAlertText) {
             errorAlert = (
-                <ErrorAlert main={errorAlertText} onDismiss={this.onHideAlert} />
+                <AlertBlock bsStyle="danger" main={errorAlertText} onDismiss={this.onHideAlert} />
             )
         }
         return (

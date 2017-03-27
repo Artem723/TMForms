@@ -6,7 +6,6 @@ import {
     FormGroup,
     InputGroup,
     FormControl,
-    ControlLabel,
     ButtonGroup,
     Glyphicon
 } from "react-bootstrap"
@@ -70,14 +69,6 @@ export default class QuestionEdit extends Component {
                     {addAnswerButton}
                 </div>
                 <div className="questionEdit-settings">
-                    {/*<FormGroup controlId="formControlsSelect">
-                        <ControlLabel>type:</ControlLabel>
-                        <FormControl value={type} componentClass="select" placeholder="select" onChange={onChangeType}>
-                            <option value="string">plain text</option>
-                            <option value="check">checkbox</option>
-                            <option value="radio">radio button</option>
-                        </FormControl>
-                    </FormGroup>*/}
                     <SelectGroup value={type} label="type:" onChange={onChangeType} optionsValues={["string","check","radio"]} optionsText={["plain text","checkbox","radio button"]}/>
                     <ButtonGroup >
                         <Button bsStyle="primary" onClick={onCopyQuestion}>copy <i className="fa fa-copy fa-lg"></i></Button>

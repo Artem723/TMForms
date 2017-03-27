@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import Question from "../Question"
 import { Col, Button, ListGroup, ListGroupItem } from "react-bootstrap"
-import ErrorAlert from "../ErrorAlert"
+import AlertBlock from "../AlertBlock"
 import "./FormViewer.css"
 // const form = {
 //     "_id": "58a6e353702e7410f4a33ee2",
@@ -112,7 +112,10 @@ export default class FormViewer extends Component {
                 if(!body) return;
                 const { title, description, questions } = body;
                 const questionList = questions.map((el) => {
-                    return { ...el, answers: [] }
+                    return { 
+                        ...el, 
+                        answers: el.type === "string" ? "" : [] 
+                    }
                 });
                 this.setState({
                     title,
@@ -176,11 +179,12 @@ export default class FormViewer extends Component {
         const { title, description, questions, isSended, IsClosed, hasResponseObtained } = this.state;
         let body;
         const alertProps = {
+            bsStyle: "danger",
             header: "Oh, something went wrong!",
             main: "We've got server issue. We try to do everything so that it does not happen again",
             onDismiss: this.onHideErrorAlertonHide
         }
-        const errAlert = <ErrorAlert className="absolute" {...alertProps} />;
+        const errAlert = <AlertBlock className="absolute" {...alertProps} />;
         if (!hasResponseObtained) {
             body = (
                 <div className="Spinner"></div>

@@ -4,7 +4,6 @@ import "../header.css"
 
 export default class HeaderUnloggedIn extends Component {
     render() {
-        const {onGoToLogInHandler, onGoToSignUpHandler} = this.props;
         return (
             <ul className="navigation-bar">
                 <li><Link to="/logIn">React Forms</Link></li>

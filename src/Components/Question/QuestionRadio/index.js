@@ -7,7 +7,7 @@ export default class QuestionRadio extends Component {
         const {possblAns, questionText, answers, onChange} = this.props;
         const answersList = possblAns.map((el, ind) => {
             return (
-                <Radio name={el} checked={el === answers} onChange={onChange}>
+                <Radio key={ind} name={el} checked={el === answers} onChange={onChange}>
                     {el}
                 </Radio>
             )

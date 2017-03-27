@@ -1,6 +1,5 @@
 import React, { Component } from "react"
 import { Link } from "react-router"
-import { Glyphicon } from "react-bootstrap"
 import DeleteModal from "./DeleteModal"
 import "./FormTile.css"
 

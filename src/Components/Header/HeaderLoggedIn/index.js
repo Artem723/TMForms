@@ -7,7 +7,6 @@ export default class HeaderLoggedIn extends Component {
     render() {
         const payload = this.props.token.split(".")[1];
         const onLogOutHandler = this.props.onLogOutHandler;
-        const onGoToHomeHandler = this.props.onGoToHomeHandler;
         const login = JSON.parse(atob(payload)).login;
         return (
             <ul className="navigation-bar">

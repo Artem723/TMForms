@@ -3,7 +3,7 @@ import SearchBar from "../SearchBar"
 import FormTile from "../FormTile"
 import "./Dashboard.css"
 import { Row, Col, Button } from "react-bootstrap"
-import ErrorAlert from "../ErrorAlert"
+import AlertBlock from "../AlertBlock"
 // const forms = [
 //   {
 //     "_id": "58a6e345702e7410f4a33ed6",
@@ -163,13 +163,14 @@ export default class Dashboard extends Component {
     let errAlert = null;
     if (showErrorAlert) {
       const alertProps = {
+        bsStyle: "danger",
         header: "Oh, something went wrong!",
         main: "We've got server issue. We try to do everything so that it does not happen again",
-        footer: <Button onClick={this.onHideErrorAlertonHide}>OK</Button>,
+        footer: <Button onClick={this.onHideErrorAlert}>OK</Button>,
         onDismiss: this.onHideErrorAlertonHide
       }
 
-      errAlert = <ErrorAlert {...alertProps} />
+      errAlert = <AlertBlock {...alertProps} />
     }
     return (
       <div className="Dashboard">

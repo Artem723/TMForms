@@ -1,15 +1,11 @@
 import React, { Component } from "react"
 import {
     Col,
-    Alert,
-    FormGroup,
-    ControlLabel,
-    FormControl,
     Button
 } from "react-bootstrap"
 import { Link } from "react-router"
 import FieldGroup from "../FieldGroup"
-import ErrorAlert from "../ErrorAlert"
+import AlertBlock from "../AlertBlock"
 import "./LogIn.css"
 
 export default class LogIn extends Component {
@@ -128,7 +124,7 @@ export default class LogIn extends Component {
         let errorAlert = null;
         if (errorAlertText) {
             errorAlert = (
-                <ErrorAlert main={errorAlertText} onDismiss={this.onHideAlert}/>
+                <AlertBlock bsStyle="danger" main={errorAlertText} onDismiss={this.onHideAlert}/>
             )
         }
         const loginFieldProps = {

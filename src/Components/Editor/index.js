@@ -49,7 +49,8 @@ export default class Editor extends Component {
             description: "",
             isOpen: true,
             questions: [],
-            isLoading: false
+            isLoading: false,
+            isSaved: false
         }
         this.onIsOpenChange = this.onIsOpenChange.bind(this);
         this.onChangeByName = this.onChangeByName.bind(this);
@@ -79,7 +80,8 @@ export default class Editor extends Component {
                         questionText: "Question",
                         type: "check",
                         __key: Date.now(),
-                        possblAns: ["Answer 1"]
+                        possblAns: ["Answer 1"],
+                        isSaved: false
                     }
                 ]
             })
@@ -94,24 +96,26 @@ export default class Editor extends Component {
             const option = {
                 method: "GET",
                 headers
-            }
-            let status;
+            }            
             fetch(`/api/forms/${formId}`, option)
                 .then((response) => {
                     this.setState({
                         isLoading: false
                     })
-                    status = response.status;
+                    const status = response.status;
                     if (status === 200)
                         return response.json();
                     else if (status === 500)
-                        alert("internal server Error");
+                        this.setState({
+                            showErrorAlert: true
+                        });
                     else if (status === 404)
-                        alert("Form not found!");
+                        this.props.router.replace("/not-found");
                     else if (status === 403)
-                        alert("Permission denied");
+                        //permission denied
+                        this.props.onLogOutHandler();
                     else if (status === 401) {
-                        alert("Wrong token");
+                        //wrong token
                         this.props.onLogOutHandler();
                     }
                 })
@@ -121,7 +125,8 @@ export default class Editor extends Component {
                         title,
                         description,
                         isOpen,
-                        questions
+                        questions,
+                        isSaved: true
                     });
                 })
                 .catch((err) => {
@@ -151,6 +156,7 @@ export default class Editor extends Component {
             switch (name) {
                 case "title": newVal = "Form title"; break;
                 case "description": newVal = "Description"; break;
+                default: throw new Error("Unknown name of input");
             }
             this.setState({
                 [name]: newVal
@@ -315,18 +321,23 @@ export default class Editor extends Component {
                     if (formId === "new-form") {
                         let locationHeader = response.headers.get("Location");
                         const id = locationHeader.split("/").pop();
-                        this.props.router.replace("/forms/" + id + "/edit");
+                        this.props.router.replace("/forms/" + id + "/edit");                        
                     } else {
                         console.log("====================SAVED==========================");
                     }
+                    this.setState({
+                        isSaved: true
+                    })
                 } else if (status === 500)
-                    alert("internal server Error");
+                    this.setState({
+                        showErrorAlert: true
+                    });
                 else if (status === 404)
                     alert("Form not found!");
                 else if (status === 403)
                     alert("Permission denied");
                 else if (status === 401) {
-                    alert("Wrong token");
+                    //wrong token
                     this.ptops.onLogOutHandler();
                 }
             })

@@ -1,10 +1,10 @@
 import React from "react"
-import {Alert, Button} from "react-bootstrap"
+import {Alert} from "react-bootstrap"
 
-export default function ErrorAlert(props) {
+export default function AlertBlock(props) {
     const { header, main, footer, ...rest } = props;
     return (
-        <Alert bsStyle="danger"  {...rest}>
+        <Alert {...rest}>
             {header && <h4>{header}</h4>}
             <p>{main}</p>
             {footer && <p>{footer}</p>}
@@ -12,6 +12,6 @@ export default function ErrorAlert(props) {
     )
 }
 
-ErrorAlert.propTypes = {
+AlertBlock.propTypes = {
     main: React.PropTypes.string.isRequired,
 } 
