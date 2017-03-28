@@ -4,8 +4,8 @@ import { Modal, Button } from "react-bootstrap"
 export default function DeleteModal(props) {
     const {show, onClose, onDelete} = props;
     return (
-        <Modal show={show} onHide={onClose}>
-            <Modal.Body restoreFocus={true} >
+        <Modal restoreFocus={true} show={show} onHide={onClose}>
+            <Modal.Body>
                 Are you sure you wont to delete the form.
             </Modal.Body>
             <Modal.Footer>
