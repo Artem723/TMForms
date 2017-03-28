@@ -3,9 +3,9 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let questionSchema = new Schema({
-    questionText: String,
+    questionText: {type: String, trim: true, required: true},
     possblAns: {},//key value pair, where key is answer, value is numbers of replies to it. Should be empty if type isn't "check" or "radio"
-    type: String, // 'string', radio' or 'check'
+    type: {type: String, enum: ["string", "radio", "check"], required: true}, // 'string', radio' or 'check'
     usersAns: [String] // type only  String, fill only with string type
 }, { minimize: false });
 

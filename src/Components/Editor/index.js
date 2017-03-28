@@ -176,8 +176,9 @@ export default class Editor extends Component {
         if (!value)
             this.setState((prevState) => {
                 const questions = prevState.questions.slice();
-                const possblAns = questions[indOfQuestion].possblAns;
+                const possblAns = questions[indOfQuestion].possblAns.map((el)=>el);
                 possblAns[indOfAnswer] = `answer ${indOfAnswer + 1}`;
+                questions[indOfQuestion].possblAns = possblAns;
                 return {
                     questions
                 };

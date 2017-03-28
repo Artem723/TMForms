@@ -111,8 +111,8 @@ userRoutes.route("/forms/:id")
          * }
          */
 
-        let body = req.body;
-        let form = req.form;
+        const body = req.body;
+        const form = req.form;
         if (typeof body.title !== "string" || typeof body.description !== "string" || !Array.isArray(body.questions) || typeof body.isOpen !== "boolean") {
             res.status(400).json({ message: "The data type of the submitted form is not valid" }).end();
             return;
@@ -125,8 +125,17 @@ userRoutes.route("/forms/:id")
         form.description = body.description;
         form.isOpen = body.isOpen;
         //save user's answers into buffer to restore
+        //answers is object whose propertys are question's id and values are possblAns
+        const answersString = {};
+        const answersCheckable = {};
+        form.questions.forEach((q)=>{
+            if(q.type === "string")
+                answersString[q.id] = q.usersAns;
+            else 
+                answersCheckable[q.id] = q.possblAns;
+        })
         form.questions = [];
-        form.addQuestions(body.questions);
+        form.addQuestions(body.questions, answersCheckable, answersString);
         form.save(function (err) {
             if (err) {
                 res.status(500).json({ message: "Internal server error. Can't save form." }).end();

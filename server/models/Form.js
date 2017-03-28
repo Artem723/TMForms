@@ -10,24 +10,23 @@ const {
 } = require("./constants")
 
 const formSchema = new Schema({
-    title: String,
-    description: String,
+    title: {type: String, trim: true, required: true},
+    description: {type: String, trim: true},
     questions: [QuestionSchema],
-    isOpen: Boolean
+    isOpen: {type: Boolean, required: true}
 }, { minimize: false });
 const Question = mongoose.model('question', QuestionSchema);
 /**
- * Method validates and adds the questions to document. This method doesn't save changes.
-* @param  {Array} questions {array of questions that need to be added to document}
-* 
+ *@function Method validates and adds the questions to document. This method doesn't save changes.
+* @param  {Array} questions array of questions that need to be added to document, required
+* @param  {Object} [answersCheckable] properies are question's id and value is object possblAns
+* @param  {Object} [answersString] properies are question's id and value is array of usersAns
 */
-formSchema.methods.addQuestions = function (questions, answers) {
+formSchema.methods.addQuestions = function (questions, answersCheckable, answersString) {
     let self = this;
     questions.forEach(function (q, ind) {
         //skip if number of questions greate than constant
         if (ind > MAX_NUMBER_OF_QUESTIONS - 1) return;
-        //questions souldn't contain id field
-        if (q._id) q._id = undefined;
         if (typeof q.questionText !== "string" || typeof q.type !== "string" || !Array.isArray(q.possblAns)) return;
         if (q.questionText === "") return;
         if (q.questionText.length > MAX_LENGTH_OF_QUESTION_TEXT) q.questionText = q.questionText.slice(0, MAX_LENGTH_OF_QUESTION_TEXT);
@@ -37,11 +36,13 @@ formSchema.methods.addQuestions = function (questions, answers) {
             const questionDocument = new Question({ questionText: q.questionText, type: q.type });
             questionDocument.possblAns = {};
             q.possblAns.forEach((el, ind) => {
-
+                //if(answers && q._id) value = (answers[q._id] && answers[q._id][el]) || 0;
                 //skip if number of answers greate than constant
-                if (ind > MAX_NUMBER_OF_ANSWERS - 1 || typeof el !== "string" || !el) return;
+                if (ind > MAX_NUMBER_OF_ANSWERS - 1 || !el ||  typeof el !== "string" ) return;
+                el = el.trim();
                 if (el.length > MAX_LENGTH_OF_ANSWER_TEXT) el = el.slice(0, MAX_LENGTH_OF_ANSWER_TEXT);
-                questionDocument.possblAns[el] = 0;
+                const answers = answersCheckable;
+                questionDocument.possblAns[el] = (answers && answers[q._id] && answers[q._id][el]) || 0;
                 questionDocument.markModified("possblAns." + el);
             })
             self.questions.push(questionDocument);
@@ -50,9 +51,11 @@ formSchema.methods.addQuestions = function (questions, answers) {
 
         }
         else if (q.type === "string") {
+            const answers = answersString;
             const questionDocument = new Question({ questionText: q.questionText, type: q.type });
             questionDocument.possblAns = {};
-            questionDocument.markModified("possblAns")
+            questionDocument.markModified("possblAns");
+            questionDocument.usersAns = (answers && answers[q._id]) || [];
             self.questions.push(questionDocument);
         }
         else return;
@@ -64,7 +67,6 @@ formSchema.methods.addQuestions = function (questions, answers) {
 
     })
 }
-
 module.exports = function (db) {
     return db.model("Form", formSchema);
 };
