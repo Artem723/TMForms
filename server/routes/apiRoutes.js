@@ -30,9 +30,13 @@ apiRoutes.post("/authentication", function (req, res) {
         res.status(400).json({ message: "Missed field." }).end();
         return;
     }
+    if (typeof body.login !== "string" || typeof body.password !== string) {
+        res.status(400).json({ message: "wrong data type." }).end();
+        return;
+    }
     User.findOne({ login: body.login }, function (err, user) {
         if (err) {
-            res.status(500).json({ message: "Internal server error" }).end();
+            res.status(500).json({ message: "Internal server error." }).end();
             throw err;
         }
         if (!user) {
@@ -63,7 +67,7 @@ apiRoutes.post("/registration", function (req, res) {
      *  password: String
      * } */
     let body = req.body;
-    if (!body.login || !body.password) {
+    if (typeof body.login !== "string" || typeof body.password !== "string") {
         res.status(400).json({ message: "Missed field." }).end();
         return;
     }
@@ -87,7 +91,6 @@ apiRoutes.post("/registration", function (req, res) {
         let newUser = new User({
             login: body.login,
         });
-        console.log(newUser);
         newUser.setPassword(body.password);
         newUser.save(function (err) {
             if (err) {
@@ -173,7 +176,6 @@ apiRoutes.route("/forms/:id")
     checkPermission,
     function (req, res) {
         req.form.questions.forEach(function (el) {
-            console.log(el)
             el.usersAns = undefined;
             el.possblAns = Object.keys(el.possblAns);
         });
