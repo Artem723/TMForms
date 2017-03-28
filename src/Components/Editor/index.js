@@ -50,7 +50,7 @@ export default class Editor extends Component {
             description: "",
             isOpen: true,
             questions: [],
-            isLoading: false,
+            isLoading: true,
             isSaved: false,
             errorAlertText: null
         }
@@ -78,6 +78,7 @@ export default class Editor extends Component {
                 title: "Form title",
                 description: "Form description",
                 isOpen: true,
+                isLoading: false,
                 questions: [
                     {
                         questionText: "Question",
@@ -90,9 +91,6 @@ export default class Editor extends Component {
             })
         } else {
             //load form from server
-            this.setState({
-                isLoading: true
-            })
             const headers = {
                 "Authorization": `Bearer ${this.props.token}`
             }
@@ -102,15 +100,13 @@ export default class Editor extends Component {
             }
             fetch(`/api/forms/${formId}`, option)
                 .then((response) => {
-                    this.setState({
-                        isLoading: false
-                    })
                     const status = response.status;
                     if (status === 200)
                         return response.json();
                     else if (status === 500)
                         this.setState({
-                            errorAlertText: "We've got server issue. We try to do everything so that it does not happen again"
+                            errorAlertText: "We've got server issue. We try to do everything so that it does not happen again",
+                            isLoading: false
                         });
                     else if (status === 404)
                         this.props.router.replace("/not-found");
@@ -131,7 +127,8 @@ export default class Editor extends Component {
                         isOpen,
                         questions,
                         isSaved: true,
-                        errorAlertText: null
+                        errorAlertText: null,
+                        isLoading: false
                     });
                 })
                 .catch((err) => {

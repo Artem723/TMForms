@@ -60,9 +60,7 @@ export default class Results extends Component {
         fetch(`/api/results/forms/${formId}`, option)
             .then((response) => {
                 const status = response.status;
-                this.setState({
-                    hasResponseObtained: true
-                });
+
                 if (status === 401) {
                     this.props.onLogOutHandler();
                 }
@@ -73,22 +71,23 @@ export default class Results extends Component {
                     this.props.onLogOutHandler();
                 else if (status >= 500)
                     this.setState({
-                        errorAlertText: "Oh, we've got an server issue.  We try to do everything so that it does not happen again."
+                        errorAlertText: "Oh, we've got an server issue.  We try to do everything so that it does not happen again.",
+                        hasResponseObtained: true
                     });
                 else if (status === 200) {
-                    this.setState({
-                        errorAlertText: null
-                    })
                     return response.json();
                 }
                 else this.setState({
-                    errorAlertText: "Oh, something went wrong."
+                    errorAlertText: "Oh, something went wrong.",
+                    hasResponseObtained: true
                 });
             })
             .then((body) => {
                 if (!body) return;
                 this.setState({
-                    data: body
+                    data: body,
+                    errorAlertText: null,
+                    hasResponseObtained: true
                 });
             })
             .catch((err) => {
@@ -113,7 +112,7 @@ export default class Results extends Component {
         else
             body = (
                 <div>
-                    {errorAlertText && <AlertBlock bsStyle="danger" main={errorAlertText} onDismiss={this.onHideErrorAlert}/>}
+                    {errorAlertText && <AlertBlock bsStyle="danger" main={errorAlertText} onDismiss={this.onHideErrorAlert} />}
                     <Col sm={10} smOffset={1} md={8} mdOffset={2} lg={6} lgOffset={3} className="animated">
                         <Link className="button-link" to={`/forms/${formId}/edit`}><Button bsStyle="primary" block >Edit</Button></Link>
                         {resBlocks}

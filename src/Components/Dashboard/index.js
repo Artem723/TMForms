@@ -60,6 +60,7 @@ export default class Dashboard extends Component {
         return response.json();
       })
       .then((body) => {
+        if(!body) return;
         const forms = body;
         this.setState({
           forms: forms,
