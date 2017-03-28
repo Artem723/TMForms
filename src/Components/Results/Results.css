@@ -9,6 +9,7 @@
 
 .Results-container .button-link{
     color: white;
+    text-decoration: none;
 }
 .Results-container {
     margin-top: 10px;

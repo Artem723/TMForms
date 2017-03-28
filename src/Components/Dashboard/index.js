@@ -38,7 +38,6 @@ export default class Dashboard extends Component {
     this.onHideErrorAlert = this.onHideErrorAlert.bind(this);
   }
   componentDidMount() {
-    console.log("in Dashboard " + this.props.token)
     const headers = {
       "Authorization": `Bearer ${this.props.token}`
     }

@@ -30,7 +30,7 @@ apiRoutes.post("/authentication", function (req, res) {
         res.status(400).json({ message: "Missed field." }).end();
         return;
     }
-    if (typeof body.login !== "string" || typeof body.password !== string) {
+    if (typeof body.login !== "string" || typeof body.password !== "string") {
         res.status(400).json({ message: "wrong data type." }).end();
         return;
     }

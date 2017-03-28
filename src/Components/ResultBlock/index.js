@@ -31,7 +31,7 @@ export default class ResultBlock extends Component {
 
     }
     render() {
-        const { questionText, numOfAns, answers, type, id } = this.props;
+        const { questionText, answers, type, id } = this.props;
         const {isEmpty} = this.state;
         let answer;
         let list;

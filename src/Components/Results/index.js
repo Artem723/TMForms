@@ -2,8 +2,8 @@ import React, { Component } from "react"
 import ResultBlock from "../ResultBlock"
 import { Col, Button } from "react-bootstrap"
 import { Link } from "react-router"
+import AlertBlock from "../AlertBlock"
 import "./Results.css"
-
 // const data = [
 //     {
 //         id: 0,
@@ -46,7 +46,7 @@ export default class Results extends Component {
             hasResponseObtained: false,
             errorAlertText: null
         }
-        this.onEditHandler = this.onEditHandler.bind(this);
+        this.onHideErrorAlert = this.onHideErrorAlert.bind(this);
     }
     componentDidMount() {
         const headers = {
@@ -61,33 +61,48 @@ export default class Results extends Component {
             .then((response) => {
                 const status = response.status;
                 this.setState({
-                    hasResponseObtained: false
+                    hasResponseObtained: true
                 });
                 if (status === 401) {
                     this.props.onLogOutHandler();
                 }
-                else if (status === 404) this.props.router.replace("/not-found");
-                else if (status === 403) alert("permission denied");
-                else if (status >= 500) alert("internal server Error");
-                else if (status === 200) return response.json();
-                else alert("unknown error")
+                else if (status === 404)
+                    this.props.router.replace("/not-found");
+                else if (status === 403)
+                    //permission dinied
+                    this.props.onLogOutHandler();
+                else if (status >= 500)
+                    this.setState({
+                        errorAlertText: "Oh, we've got an server issue.  We try to do everything so that it does not happen again."
+                    });
+                else if (status === 200) {
+                    this.setState({
+                        errorAlertText: null
+                    })
+                    return response.json();
+                }
+                else this.setState({
+                    errorAlertText: "Oh, something went wrong."
+                });
             })
             .then((body) => {
+                if (!body) return;
                 this.setState({
-                    data: body,
-                    hasResponseObtained: true
+                    data: body
                 });
             })
             .catch((err) => {
                 throw err;
             })
     }
-    onEditHandler() {
-        this.props.router.replace("/forms/" + this.props.params.id + "/edit");
+    onHideErrorAlert() {
+        this.setState({
+            errorAlertText: null
+        })
     }
     render() {
         const formId = this.props.params.id;
-        const { data, hasResponseObtained } = this.state;
+        const { data, hasResponseObtained, errorAlertText } = this.state;
         const resBlocks = data.map((el) => {
             //const {type, id, question, possblAns, usersAns} = el;
             return <ResultBlock {...el} key={el.id} />
@@ -97,14 +112,17 @@ export default class Results extends Component {
             body = <div className="Spinner" />
         else
             body = (
-                 <Col sm={10} smOffset={1} md={8} mdOffset={2} lg={6} lgOffset={3} className="animated">
-                    <Button bsStyle="primary" block onClick={this.onEditHandler}><Link className="button-link" to={`/form/${formId}/edit`}>Edit</Link></Button>
-                    {resBlocks}
-                </Col>
+                <div>
+                    {errorAlertText && <AlertBlock bsStyle="danger" main={errorAlertText} onDismiss={this.onHideErrorAlert}/>}
+                    <Col sm={10} smOffset={1} md={8} mdOffset={2} lg={6} lgOffset={3} className="animated">
+                        <Link className="button-link" to={`/forms/${formId}/edit`}><Button bsStyle="primary" block >Edit</Button></Link>
+                        {resBlocks}
+                    </Col>
+                </div>
             )
         return (
-            <section className="Results-container">              
-                    {body}
+            <section className="Results-container">
+                {body}
             </section>
         )
     }

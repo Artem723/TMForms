@@ -73,7 +73,6 @@ export default class QuestionEdit extends Component {
             });
             addAnswerButton = (length < 15) ? <Button bsStyle="primary" onClick={onAddAnswer}><Glyphicon glyph="plus" /></Button> : null;
         }
-        const delQuestionButton = numOfQuestions > 1 ? <Button bsStyle="primary" onClick={onDeleteQuestion}>delete <Glyphicon glyph="trash" /></Button> : null;
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">
@@ -84,8 +83,8 @@ export default class QuestionEdit extends Component {
                 <div className="questionEdit-settings">
                     <SelectGroup value={type} label="type:" onChange={onChangeType} optionsValues={["string","check","radio"]} optionsText={["plain text","checkbox","radio button"]}/>
                     <ButtonGroup >
-                        <Button bsStyle="primary" onClick={onCopyQuestion}>copy <i className="fa fa-copy fa-lg"></i></Button>
-                        {delQuestionButton}
+                        {numOfQuestions < 50 ? <Button bsStyle="primary" onClick={onCopyQuestion}>copy <i className="fa fa-copy fa-lg"></i></Button> : null}
+                        {numOfQuestions > 1  ? <Button bsStyle="primary" onClick={onDeleteQuestion}>delete <Glyphicon glyph="trash" /></Button> : null}
                     </ButtonGroup>
                 </div>
             </div>
