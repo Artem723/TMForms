@@ -141,7 +141,7 @@ export default class LogIn extends Component {
         }
         return (
             <section className="LogIn-container">
-                <Col sm={8} smOffset={2} lg={4} lgOffset={4}>
+                <Col md={8} mdOffset={2} lg={4} lgOffset={4}>
                     <header className="logo-text">React Forms</header>
                     <p className="title">Authentification</p>
                     <form onSubmit={this.onSignInHandler} className="bordered">

@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import ChartWrapper from "./ChartWrapper"
+import "./ResultBlock.css"
 
 export default class ResultBlock extends Component {
     constructor(props) {

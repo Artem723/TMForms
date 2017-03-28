@@ -123,6 +123,7 @@ export default class Editor extends Component {
                     }
                 })
                 .then((body) => {
+                    if(!body) return;
                     const { title, description, isOpen, questions } = body;
                     this.setState({
                         title,
@@ -343,9 +344,8 @@ export default class Editor extends Component {
                         let locationHeader = response.headers.get("Location");
                         const id = locationHeader.split("/").pop();
                         this.props.router.replace("/forms/" + id + "/edit");
-                    } else {
-                        console.log("====================SAVED==========================");
                     }
+                    //TODO Show POPUP
                     this.setState({
                         isSaved: true,
                         showErrorAlert: false
@@ -400,7 +400,6 @@ export default class Editor extends Component {
     }
 
     render() {
-        console.log("===================== RENDER =========================");
         const { questions, title, description, isLoading, isOpen, isSaved, showErrorAlert } = this.state;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
@@ -513,7 +512,7 @@ export default class Editor extends Component {
                             </form>
                         </main>
                         <footer>
-                            <Button block bsStyle="primary" onClick={this.onAddQuestion}>Add</Button>
+                            {questionList.length < 50 ? <Button block bsStyle="primary" onClick={this.onAddQuestion}>Add</Button> : null}
                         </footer>
                     </Col>
                 </Row>

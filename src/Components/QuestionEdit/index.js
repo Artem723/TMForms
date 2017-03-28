@@ -13,14 +13,18 @@ import "./QuestionEdit.css"
 
 export default class QuestionEdit extends Component {
     shouldComponentUpdate(nextProps) {
-        const {questionText, possblAns, type} = this.props;
-        if(nextProps.questionText === questionText && nextProps.possblAns===possblAns && nextProps.type === type)
+        const {questionText, possblAns, type, numOfQuestions} = this.props;
+        if(
+            nextProps.questionText === questionText && 
+            nextProps.possblAns===possblAns && 
+            nextProps.type === type && 
+            nextProps.numOfQuestions === numOfQuestions
+        )
             return false;
         else 
             return true;
     }
     render() {
-        console.log("render")
         const {
             questionText,
             possblAns,
