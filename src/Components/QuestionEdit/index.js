@@ -73,6 +73,7 @@ export default class QuestionEdit extends Component {
             });
             addAnswerButton = (length < 15) ? <Button bsStyle="primary" onClick={onAddAnswer}><Glyphicon glyph="plus" /></Button> : null;
         }
+
         return (
             <div className="questionEdit-container">
                 <div className="questionEdit-content">

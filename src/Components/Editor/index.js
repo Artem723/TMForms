@@ -52,7 +52,7 @@ export default class Editor extends Component {
             questions: [],
             isLoading: false,
             isSaved: false,
-            showErrorAlert: false
+            errorAlertText: null
         }
         this.onIsOpenChange = this.onIsOpenChange.bind(this);
         this.onChangeByName = this.onChangeByName.bind(this);
@@ -110,7 +110,7 @@ export default class Editor extends Component {
                         return response.json();
                     else if (status === 500)
                         this.setState({
-                            showErrorAlert: true
+                            errorAlertText: "We've got server issue. We try to do everything so that it does not happen again"
                         });
                     else if (status === 404)
                         this.props.router.replace("/not-found");
@@ -123,7 +123,7 @@ export default class Editor extends Component {
                     }
                 })
                 .then((body) => {
-                    if(!body) return;
+                    if (!body) return;
                     const { title, description, isOpen, questions } = body;
                     this.setState({
                         title,
@@ -131,7 +131,7 @@ export default class Editor extends Component {
                         isOpen,
                         questions,
                         isSaved: true,
-                        showErrorAlert: false
+                        errorAlertText: null
                     });
                 })
                 .catch((err) => {
@@ -206,7 +206,7 @@ export default class Editor extends Component {
                     return el
             });
             questions[indOfQuestion].possblAns = possblAns;
-            
+
             return {
                 questions,
                 isSaved: false
@@ -227,7 +227,7 @@ export default class Editor extends Component {
     onAddAnswer(indOfQuestion) {
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            const possblAns = questions[indOfQuestion].possblAns.map((el)=>el);
+            const possblAns = questions[indOfQuestion].possblAns.map((el) => el);
             possblAns.push(`answer ${possblAns.length + 1}`);
             questions[indOfQuestion].possblAns = possblAns;
             return {
@@ -239,7 +239,7 @@ export default class Editor extends Component {
     onDeleteAnswer(indOfQuestion, indOfAnswer) {
         this.setState((prevState) => {
             const questions = prevState.questions.slice();
-            const possblAns = questions[indOfQuestion].possblAns.map((el)=>el);
+            const possblAns = questions[indOfQuestion].possblAns.map((el) => el);
             possblAns.splice(indOfAnswer, 1);
             questions[indOfQuestion].possblAns = possblAns;
             return {
@@ -348,11 +348,11 @@ export default class Editor extends Component {
                     //TODO Show POPUP
                     this.setState({
                         isSaved: true,
-                        showErrorAlert: false
+                        errorAlertText: null
                     })
                 } else if (status === 500)
                     this.setState({
-                        showErrorAlert: true
+                        errorAlertText: "We've got server issue. We try to do everything so that it does not happen again"
                     });
                 else if (status === 404)
                     alert("Form not found!");
@@ -391,7 +391,7 @@ export default class Editor extends Component {
 
     onHideErrorAlert() {
         this.setState({
-            showErrorAlert: false
+            errorAlertText: null
         });
     }
 
@@ -400,7 +400,8 @@ export default class Editor extends Component {
     }
 
     render() {
-        const { questions, title, description, isLoading, isOpen, isSaved, showErrorAlert } = this.state;
+        const { questions, title, description, isLoading, isOpen, isSaved, errorAlertText } = this.state;
+        const formID = this.props.params.id;
         const numOfQuestions = questions.length;
         const questionList = questions.map((el, indOfQuestion) => {
             const { _id, possblAns, type, questionText, __key } = el;
@@ -422,20 +423,19 @@ export default class Editor extends Component {
             )
         })
         let errAlert = null;
-        if (showErrorAlert) {
+        if (errorAlertText) {
             const alertProps = {
                 bsStyle: "danger",
                 header: "Oh, something went wrong!",
-                main: "We've got server issue. We try to do everything so that it does not happen again",
+                main: errorAlertText,
                 onDismiss: this.onHideErrorAlert
             }
             errAlert = <AlertBlock className="fixed-in-top" {...alertProps} />
         }
-        const formId = this.props.params.id;
         let linkComp;
         //if form is new, _id contains null value
-        if (formId !== "new-form") {
-            const link = "http://localhost:3000/forms/" + formId;
+        if (formID !== "new-form") {
+            const link = "http://localhost:3000/forms/" + formID;
             linkComp = (
                 <div className="Editor-link">
                     <div>Link:</div>
@@ -443,7 +443,7 @@ export default class Editor extends Component {
                 </div>
             );
         } else {
-            linkComp = <div className="msg-text">Save the form, when it has been saved you can pass it</div>;
+            linkComp = <div className="msg-text">Save the form, when it has been saved you can pass it and see results</div>;
         }
         const titleProps = {
             label: "",
@@ -490,7 +490,7 @@ export default class Editor extends Component {
                 <Row>
                     <Col md={2} lgOffset={1}>
                         <aside className="fixed">
-                            <Button block bsStyle="primary" onClick={this.onResultsHandler}>Results</Button>
+                            <Button block bsStyle="primary" onClick={this.onResultsHandler} disabled={formID === "new-form"}>Results</Button>
                             <Button block bsStyle="primary" onClick={this.onSaveHandler}>Save</Button>
                         </aside>
                     </Col>
